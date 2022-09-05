@@ -13,5 +13,5 @@ public class Film {
     private String name; // название
     private String description; // описание
     LocalDate releaseDate; // дата релиза
-    Duration duration; // продолжительность фильма
+    int duration; // продолжительность фильма
 }
