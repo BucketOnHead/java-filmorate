@@ -4,7 +4,6 @@ import lombok.NonNull;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.validator.exception.FilmValidatorException;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
@@ -15,7 +14,7 @@ public class FilmValidator {
         String name = film.getName();
         String description = film.getDescription();
         LocalDate releaseDate = film.getReleaseDate();
-        Duration duration = film.getDuration();
+        int duration = film.getDuration();
 
         if (name == null || name.isBlank()) {
             throw new FilmValidatorException(
@@ -32,7 +31,7 @@ public class FilmValidator {
                     String.format(INCORRECT_RELEASE_DATE, releaseDate.format(ISO_DATE)));
         }
 
-        if (duration.isNegative()) {
+        if (duration < 0) {
             throw new FilmValidatorException(
                     String.format(INCORRECT_DURATION, duration));
         }
