@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 import ru.yandex.practicum.filmorate.validator.exception.ValidatorException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.controller.exception.UserControllerException.USER_ALREADY_EXISTS;
@@ -17,7 +19,8 @@ import static ru.yandex.practicum.filmorate.controller.exception.UserControllerE
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
+    private int uniqueID = 1;
 
     @PostMapping
     public User create(@RequestBody User user) {
@@ -29,6 +32,7 @@ public class UserController {
                         String.format(USER_ALREADY_EXISTS, user));
             }
 
+            user.setId(uniqueID++);
             users.put(user.getId(), user);
             log.trace("Успешно добавлен пользователь: {}.", user);
         } catch (ValidatorException | UserControllerException e) {
@@ -64,8 +68,8 @@ public class UserController {
     }
 
     @GetMapping
-    public Map<Integer, User> findAll() {
+    public List<User> findAll() {
         log.trace("Возвращены все пользователи.");
-        return users;
+        return new ArrayList<>(users.values());
     }
 }

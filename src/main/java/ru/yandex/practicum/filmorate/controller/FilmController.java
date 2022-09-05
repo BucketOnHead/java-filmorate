@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 import ru.yandex.practicum.filmorate.validator.exception.ValidatorException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.controller.exception.FilmControllerException.FILM_ALREADY_EXISTS;
@@ -17,7 +19,8 @@ import static ru.yandex.practicum.filmorate.controller.exception.FilmControllerE
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    Map<Integer, Film> films = new HashMap<>();
+    private Map<Integer, Film> films = new HashMap<>();
+    private int uniqueID = 1;
 
     @PostMapping
     public Film create(@RequestBody Film film) {
@@ -29,6 +32,7 @@ public class FilmController {
                         String.format(FILM_ALREADY_EXISTS, film));
             }
 
+            film.setId(uniqueID++);
             films.put(film.getId(), film);
             log.trace("Успешно добавлен фильм: {}.", film);
         } catch (ValidatorException | FilmControllerException e) {
@@ -63,8 +67,8 @@ public class FilmController {
     }
 
     @GetMapping
-    public Map<Integer, Film> findAll() {
+    public List<Film> findAll() {
         log.trace("Возвращены все фильмы.");
-        return films;
+        return new ArrayList<>(films.values());
     }
 }
