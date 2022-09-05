@@ -19,6 +19,7 @@ import static ru.yandex.practicum.filmorate.controller.exception.FilmControllerE
 public class FilmController {
     Map<Integer, Film> films = new HashMap<>();
 
+    @PostMapping
     public Film create(@RequestBody Film film) {
         try {
             FilmValidator.validate(film);
@@ -39,6 +40,7 @@ public class FilmController {
         return film;
     }
 
+    @PutMapping
     public Film update(@RequestBody Film film) {
         try {
             FilmValidator.validate(film);
@@ -60,6 +62,7 @@ public class FilmController {
         return film;
     }
 
+    @GetMapping
     public Map<Integer, Film> findAll() {
         log.trace("Возвращены все фильмы.");
         return films;

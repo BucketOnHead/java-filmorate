@@ -19,6 +19,7 @@ import static ru.yandex.practicum.filmorate.controller.exception.UserControllerE
 public class UserController {
     Map<Integer, User> users = new HashMap<>();
 
+    @PostMapping
     public User create(@RequestBody User user) {
         try {
             UserValidator.validate(user);
@@ -40,6 +41,7 @@ public class UserController {
         return user;
     }
 
+    @PutMapping
     public User update(@RequestBody User user) {
         try {
             UserValidator.validate(user);
@@ -61,6 +63,7 @@ public class UserController {
         return user;
     }
 
+    @GetMapping
     public Map<Integer, User> findAll() {
         log.trace("Возвращены все пользователи.");
         return users;
