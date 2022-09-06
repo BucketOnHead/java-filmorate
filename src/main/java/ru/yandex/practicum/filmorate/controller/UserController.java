@@ -56,9 +56,9 @@ public class UserController {
             }
 
             users.put(user.getId(), user);
-            log.trace("Успешно добавлен пользователь: {}.", user);
+            log.trace("Пользователь успешно обновлён: {}.", user);
         } catch (ValidatorException | UserControllerException e) {
-            log.warn("Пользователь не добавлен: {}.", e.getMessage());
+            log.warn("Не удалось обновить пользователя: {}.", e.getMessage());
             throw new RuntimeException(e);
         } finally {
             log.debug("Количество пользователей: {}.", users.size());
