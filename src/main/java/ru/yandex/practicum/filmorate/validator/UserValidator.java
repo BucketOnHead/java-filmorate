@@ -21,7 +21,7 @@ public class UserValidator {
                     String.format(INCORRECT_EMAIL, email));
         }
 
-        if (login.isBlank() || login.indexOf(' ') >= 0) {
+        if (login == null || login.indexOf(' ') >= 0) {
             throw new UserValidatorException(
                     String.format(INCORRECT_LOGIN, login));
         }
