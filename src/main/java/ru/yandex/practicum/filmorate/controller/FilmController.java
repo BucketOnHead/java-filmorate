@@ -35,9 +35,12 @@ public class FilmController {
             film.setId(uniqueID++);
             films.put(film.getId(), film);
             log.trace("Успешно добавлен фильм: {}.", film);
-        } catch (ValidatorException | FilmControllerException e) {
+        } catch (ValidatorException e) {
             log.warn("Фильм не добавлен: {}.", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка валидации: " + e.getMessage(), e);
+        } catch (FilmControllerException e) {
+            log.warn("Фильм не добавлен: {}.", e.getMessage());
+            throw new RuntimeException("Ошибка контроллера:" + e.getMessage(), e);
         } finally {
             log.debug("Количество фильмов: {}.", films.size());
         }
@@ -56,9 +59,12 @@ public class FilmController {
 
             films.put(film.getId(), film);
             log.trace("Фильм успешно обновлён: {}.", film);
-        } catch (ValidatorException | FilmControllerException e) {
+        } catch (ValidatorException e) {
             log.warn("Не удалось обновить фильм: {}.", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка валидации: " + e.getMessage(), e);
+        } catch (FilmControllerException e) {
+            log.warn("Не удалось обновить фильм: {}.", e.getMessage());
+            throw new RuntimeException("Ошибка контроллера:" + e.getMessage(), e);
         } finally {
             log.debug("Количество фильмов: {}.", films.size());
         }

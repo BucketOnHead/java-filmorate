@@ -35,9 +35,12 @@ public class UserController {
             user.setId(uniqueID++);
             users.put(user.getId(), user);
             log.trace("Успешно добавлен пользователь: {}.", user);
-        } catch (ValidatorException | UserControllerException e) {
+        } catch (ValidatorException e) {
             log.warn("Пользователь не добавлен: {}.", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка валидации: " + e.getMessage(), e);
+        } catch (UserControllerException e) {
+            log.warn("Пользователь не добавлен: {}.", e.getMessage());
+            throw new RuntimeException("Ошибка контроллера: " + e.getMessage(), e);
         } finally {
             log.debug("Количество пользователей: {}.", users.size());
         }
@@ -57,9 +60,12 @@ public class UserController {
 
             users.put(user.getId(), user);
             log.trace("Пользователь успешно обновлён: {}.", user);
-        } catch (ValidatorException | UserControllerException e) {
+        } catch (ValidatorException e) {
             log.warn("Не удалось обновить пользователя: {}.", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка валидации: " + e.getMessage(), e);
+        } catch (UserControllerException e) {
+            log.warn("Не удалось обновить пользователя: {}.", e.getMessage());
+            throw new RuntimeException("Ошибка контроллера: " + e.getMessage(), e);
         } finally {
             log.debug("Количество пользователей: {}.", users.size());
         }
