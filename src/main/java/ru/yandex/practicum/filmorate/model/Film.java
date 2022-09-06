@@ -9,6 +9,6 @@ public class Film {
     private long id; // идентификатор
     private String name; // название
     private String description; // описание
-    LocalDate releaseDate; // дата релиза
-    int duration; // продолжительность фильма
+    private LocalDate releaseDate; // дата релиза
+    private int duration; // продолжительность фильма
 }
