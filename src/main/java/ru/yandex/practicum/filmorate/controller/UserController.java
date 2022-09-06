@@ -19,8 +19,8 @@ import static ru.yandex.practicum.filmorate.controller.exception.UserControllerE
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private Map<Integer, User> users = new HashMap<>();
-    private int uniqueID = 1;
+    private Map<Long, User> users = new HashMap<>();
+    private long uniqueID = 1;
 
     @PostMapping
     public User create(@RequestBody User user) {

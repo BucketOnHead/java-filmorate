@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class Film {
     public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    private int id; // идентификатор
+    private long id; // идентификатор
     private String name; // название
     private String description; // описание
     LocalDate releaseDate; // дата релиза

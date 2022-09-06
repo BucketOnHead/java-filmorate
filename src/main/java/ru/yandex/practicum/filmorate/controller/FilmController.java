@@ -19,8 +19,8 @@ import static ru.yandex.practicum.filmorate.controller.exception.FilmControllerE
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private Map<Integer, Film> films = new HashMap<>();
-    private int uniqueID = 1;
+    private Map<Long, Film> films = new HashMap<>();
+    private long uniqueID = 1;
 
     @PostMapping
     public Film create(@RequestBody Film film) {
