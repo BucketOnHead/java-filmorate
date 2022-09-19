@@ -1,6 +1,8 @@
-package ru.yandex.practicum.filmorate.controller.exception;
+package ru.yandex.practicum.filmorate.service.user;
 
-public class UserControllerException extends ControllerException {
+import ru.yandex.practicum.filmorate.service.ServiceException;
+
+public class UserServiceException extends ServiceException {
     public static final String USER_ALREADY_EXISTS;
     public static final String USER_NOT_FOUND;
 
@@ -9,10 +11,7 @@ public class UserControllerException extends ControllerException {
         USER_NOT_FOUND = "Пользователь не найден >%s";
     }
 
-    public UserControllerException() {
-    }
-
-    public UserControllerException(String message) {
+    public UserServiceException(String message) {
         super(message);
     }
 }

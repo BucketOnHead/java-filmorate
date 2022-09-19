@@ -1,13 +1,12 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.validator.film;
 
 import lombok.NonNull;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.exception.FilmValidatorException;
 
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static ru.yandex.practicum.filmorate.validator.exception.FilmValidatorException.*;
+import static ru.yandex.practicum.filmorate.validator.film.FilmValidatorException.*;
 
 public class FilmValidator {
     public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);

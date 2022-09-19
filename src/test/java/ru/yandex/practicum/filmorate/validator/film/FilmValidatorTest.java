@@ -1,21 +1,20 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.validator.film;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.exception.FilmValidatorException;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.yandex.practicum.filmorate.validator.FilmValidator.validate;
+import static ru.yandex.practicum.filmorate.validator.film.FilmValidator.validate;
 
 class FilmValidatorTest {
     private Film film;
 
     @BeforeEach
-    private void setUp() {
+    public void setUp() {
         film = new Film();
         film.setId(100L);
         film.setName("Sherlock");
@@ -28,8 +27,15 @@ class FilmValidatorTest {
      * Method under test: {@link FilmValidator#validate(Film)}
      */
     @Test
-    void testValidateName() {
+    void testValidate() {
         assertDoesNotThrow(() -> validate(film));
+    }
+
+    /**
+     * Method under test: {@link FilmValidator#validate(Film)}
+     */
+    @Test
+    void testValidateName() {
         film.setName(null);
         assertThrows(FilmValidatorException.class, () -> validate(film));
         film.setName("    ");
@@ -41,7 +47,6 @@ class FilmValidatorTest {
      */
     @Test
     void testValidateDescription() {
-        assertDoesNotThrow(() -> validate(film));
         film.setDescription(new String(new char[200]));
         assertDoesNotThrow(() -> validate(film));
         film.setDescription(new String(new char[201]));
@@ -55,7 +60,6 @@ class FilmValidatorTest {
      */
     @Test
     void testValidateReleaseDate() {
-        assertDoesNotThrow(() -> validate(film));
         film.setReleaseDate(LocalDate.parse("1895-12-27"));
         assertThrows(FilmValidatorException.class, () -> validate(film));
         film.setReleaseDate(LocalDate.parse("1895-12-28"));
@@ -69,7 +73,6 @@ class FilmValidatorTest {
      */
     @Test
     void testValidateDuration() {
-        assertDoesNotThrow(() -> validate(film));
         film.setDuration(-1);
         assertThrows(FilmValidatorException.class, () -> validate(film));
         film.setDuration(0);
@@ -78,4 +81,3 @@ class FilmValidatorTest {
         assertDoesNotThrow(() -> validate(film));
     }
 }
-

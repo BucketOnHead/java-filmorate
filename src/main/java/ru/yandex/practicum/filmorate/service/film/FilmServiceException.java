@@ -1,6 +1,8 @@
-package ru.yandex.practicum.filmorate.controller.exception;
+package ru.yandex.practicum.filmorate.service.film;
 
-public class FilmControllerException extends ControllerException {
+import ru.yandex.practicum.filmorate.service.ServiceException;
+
+public class FilmServiceException extends ServiceException {
     public static final String FILM_ALREADY_EXISTS;
     public static final String FILM_NOT_FOUND;
 
@@ -9,10 +11,7 @@ public class FilmControllerException extends ControllerException {
         FILM_NOT_FOUND = "Фильм не найден >%s";
     }
 
-    public FilmControllerException() {
-    }
-
-    public FilmControllerException(String message) {
+    public FilmServiceException(String message) {
         super(message);
     }
 }

@@ -1,4 +1,6 @@
-package ru.yandex.practicum.filmorate.validator.exception;
+package ru.yandex.practicum.filmorate.validator.user;
+
+import ru.yandex.practicum.filmorate.validator.ValidatorException;
 
 public class UserValidatorException extends ValidatorException {
     public static final String INCORRECT_EMAIL;
@@ -12,9 +14,6 @@ public class UserValidatorException extends ValidatorException {
                 + "Логин не может быть пустым и содержать пробелы.";
         INCORRECT_BIRTHDAY = "Некорректная дата рождения >%s\n"
                 + "Дата рождения не может быть в будущем.";
-    }
-
-    public UserValidatorException() {
     }
 
     public UserValidatorException(String message) {

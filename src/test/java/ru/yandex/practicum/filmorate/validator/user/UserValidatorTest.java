@@ -1,14 +1,13 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.validator.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.exception.UserValidatorException;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.filmorate.validator.UserValidator.validate;
+import static ru.yandex.practicum.filmorate.validator.user.UserValidator.validate;
 
 class UserValidatorTest {
     private User user;
@@ -27,8 +26,15 @@ class UserValidatorTest {
      * Method under test: {@link UserValidator#validate(User)}
      */
     @Test
-    void testValidateEmail() {
+    void testValidate() {
         assertDoesNotThrow(() -> validate(user));
+    }
+
+    /**
+     * Method under test: {@link UserValidator#validate(User)}
+     */
+    @Test
+    void testValidateEmail() {
         user.setEmail(null);
         assertThrows(UserValidatorException.class, () -> validate(user));
         user.setEmail("exampleexample.com");
@@ -40,7 +46,6 @@ class UserValidatorTest {
      */
     @Test
     void testValidateLogin() {
-        assertDoesNotThrow(() -> validate(user));
         user.setLogin(null);
         assertThrows(UserValidatorException.class, () -> validate(user));
         user.setLogin("Best user");
@@ -52,7 +57,6 @@ class UserValidatorTest {
      */
     @Test
     void testValidateName() {
-        assertDoesNotThrow(() -> validate(user));
         user.setName(null);
         assertDoesNotThrow(() -> validate(user));
         assertEquals(user.getLogin(), user.getName());
@@ -66,9 +70,7 @@ class UserValidatorTest {
      */
     @Test
     void testValidateBirthday() {
-        assertDoesNotThrow(() -> validate(user));
         user.setBirthday(LocalDate.MAX);
         assertThrows(UserValidatorException.class, () -> validate(user));
     }
 }
-

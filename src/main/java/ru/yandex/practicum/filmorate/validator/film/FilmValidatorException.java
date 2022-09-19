@@ -1,4 +1,6 @@
-package ru.yandex.practicum.filmorate.validator.exception;
+package ru.yandex.practicum.filmorate.validator.film;
+
+import ru.yandex.practicum.filmorate.validator.ValidatorException;
 
 public class FilmValidatorException extends ValidatorException {
     public static final String INCORRECT_NAME;
@@ -15,9 +17,6 @@ public class FilmValidatorException extends ValidatorException {
                 + "Дата релиза — не раньше 28 декабря 1895 года;";
         INCORRECT_DURATION = "Некорректная продолжительность >%s\n"
                 + "Продолжительность фильма должна быть положительной.";
-    }
-
-    public FilmValidatorException() {
     }
 
     public FilmValidatorException(String message) {

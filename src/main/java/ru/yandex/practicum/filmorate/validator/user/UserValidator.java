@@ -1,13 +1,12 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.validator.user;
 
 import lombok.NonNull;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.exception.UserValidatorException;
 
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static ru.yandex.practicum.filmorate.validator.exception.UserValidatorException.*;
+import static ru.yandex.practicum.filmorate.validator.user.UserValidatorException.*;
 
 public class UserValidator {
     public static void validate(@NonNull User user) throws UserValidatorException {
