@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.storage.user.exception;
+package ru.yandex.practicum.filmorate.exception.service.user;
 
-import ru.yandex.practicum.filmorate.storage.StorageException;
+import ru.yandex.practicum.filmorate.exception.service.ServiceException;
 
-public class LogicException extends StorageException {
+public class UserLogicException extends ServiceException {
     public static final String UNABLE_TO_ADD_YOURSELF =
             "Пользователь userID_%d не может добавить сам себя в друзья";
     public static final String UNABLE_TO_DELETE_YOURSELF =
@@ -10,7 +10,7 @@ public class LogicException extends StorageException {
     public static final String UNABLE_FRIENDS_AMONG_THEMSELVES =
             "Пользователь userID_%d не может запросить общих друзей между собой";
 
-    public LogicException(String message) {
+    public UserLogicException(String message) {
         super(message);
     }
 }
