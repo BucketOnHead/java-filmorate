@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -15,27 +14,22 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
-    private final FilmStorage filmStorage;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        log.debug("FilmController({}, {}).",
-                filmStorage.getClass().getSimpleName(),
-                filmService.getClass().getSimpleName());
-        this.filmStorage = filmStorage;
-        log.info("Подключена зависимость: {}.", filmStorage.getClass().getName());
+    public FilmController(FilmService filmService) {
+        log.debug("FilmController({}).", filmService.getClass().getSimpleName());
         this.filmService = filmService;
         log.info("Подключена зависимость: {}.", filmService.getClass().getName());
     }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        return filmStorage.add(film);
+        return filmService.add(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        return filmStorage.update(film);
+        return filmService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -45,12 +39,12 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> getFilms() {
-        return filmStorage.getAll();
+        return filmService.getAll();
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable Long id) {
-        return filmStorage.get(id);
+        return filmService.get(id);
     }
 
     @GetMapping("/popular")

@@ -28,6 +28,22 @@ public class UserService {
         log.info("Подключена зависимость: {}.", userStorage.getClass().getName());
     }
 
+    public User add(User user) {
+        return userStorage.add(user);
+    }
+
+    public User update(User user) {
+        return userStorage.update(user);
+    }
+
+    public User get(long userID) {
+        return userStorage.get(userID);
+    }
+
+    public Collection<User> getAll() {
+        return userStorage.getAll();
+    }
+
     public void addFriend(long userID, long friendID) {
         log.debug("addFriend({}, {}).", userID, friendID);
         if (!userStorage.getStorage().containsKey(userID)) {

@@ -38,6 +38,22 @@ public class FilmService {
         log.info("Подключена зависимость: {}.", userStorage.getClass().getName());
     }
 
+    public Film add(Film film) {
+        return filmStorage.add(film);
+    }
+
+    public Film update(Film film) {
+        return filmStorage.update(film);
+    }
+
+    public Film get(long filmID) {
+        return filmStorage.get(filmID);
+    }
+
+    public Collection<Film> getAll() {
+        return filmStorage.getAll();
+    }
+
     public Collection<Film> getPopularFilms(int count) {
         log.debug("getPopularFilms({}).", count);
         var popularFilms =

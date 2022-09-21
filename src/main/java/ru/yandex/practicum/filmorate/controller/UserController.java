@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -15,27 +14,22 @@ import java.util.Collection;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final UserStorage userStorage;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        log.debug("UserController({}, {}).",
-                userStorage.getClass().getSimpleName(),
-                userService.getClass().getSimpleName());
-        this.userStorage = userStorage;
-        log.info("Подключена зависимость: {}.", userStorage.getClass().getName());
+    public UserController(UserService userService) {
+        log.debug("UserController({}).", userService.getClass().getSimpleName());
         this.userService = userService;
         log.info("Подключена зависимость: {}.", userService.getClass().getName());
     }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        return userStorage.add(user);
+        return userService.add(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        return userStorage.update(user);
+        return userService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -45,12 +39,12 @@ public class UserController {
 
     @GetMapping
     public Collection<User> getUsers() {
-        return userStorage.getAll();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable long id) {
-        return userStorage.get(id);
+        return userService.get(id);
     }
 
     @GetMapping("/{id}/friends")
