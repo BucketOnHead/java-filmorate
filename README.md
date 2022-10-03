@@ -19,3 +19,20 @@ FROM films
 WHERE films.film_id = <?>; -- id фильма
 ```   
 </details>
+
+<details>
+    <summary><h3>Для пользователей:</h3></summary>
+
+* Получение списка всех пользователей:
+```SQL
+SELECT *
+FROM users;
+```
+
+* Получение информации по пользователю по его id:
+```SQL
+SELECT *
+FROM users
+WHERE users.user_id = <?>; -- id пользователя
+```   
+</details>
