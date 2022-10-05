@@ -12,7 +12,7 @@
 
 ## Схема БД
 <a href="https://drawsql.app/teams/my-team-172/diagrams/java-filmorate" title="Перейти на сайт drawsql.app">
-    <img src="https://github.com/IvanMarakanov/java-filmorate/blob/main/src/main/resources/db/schema.png" alt="Нажмите, чтобы увидеть диаграмму" />
+    <img src="https://github.com/IvanMarakanov/java-filmorate/blob/main/src/main/resources/schema.png" alt="Нажмите, чтобы увидеть диаграмму" />
 </a>
 
 ## Примеры запросов
