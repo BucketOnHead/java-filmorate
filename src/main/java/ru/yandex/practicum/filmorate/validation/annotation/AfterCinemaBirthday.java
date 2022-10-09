@@ -7,7 +7,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
- * Аннотация, валидирующая дату фильм
+ * Аннотация, валидирующая дату фильма.
  */
 @Documented
 @Constraint(validatedBy = CinemaBirthdayConstraintValidator.class)
