@@ -7,6 +7,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 
+/**
+ * Валидатор для аннотации {@link AfterCinemaBirthday}
+ */
 public class CinemaBirthdayConstraintValidator implements ConstraintValidator<AfterCinemaBirthday, LocalDate> {
     private static final LocalDate cinemaBirthday = LocalDate.of(1895, 12, 28);
 
