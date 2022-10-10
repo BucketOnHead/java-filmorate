@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.exception.storage.film;
 
-import ru.yandex.practicum.filmorate.exception.storage.ElementAlreadyExists;
-
-public class LikeAlreadyExistsException extends ElementAlreadyExists {
-    public static final String LIKE_ALREADY_EXISTS = "Пользователь userID_%d уже ставил лайк фильму filmID_%d";
+public class LikeAlreadyExistsException extends RuntimeException {
+    public static final String LIKE_ALREADY_EXISTS = "Лайк фильму ID_%d от пользователя ID_%d уже существует";
 
     public LikeAlreadyExistsException(String message) {
         super(message);
