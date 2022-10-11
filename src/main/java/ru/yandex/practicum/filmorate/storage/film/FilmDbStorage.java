@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import static java.lang.String.format;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
@@ -24,26 +23,6 @@ import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 @Slf4j
 @Component("FilmDbStorage")
 public class FilmDbStorage implements Storage<Film> {
-    private static final String SQL_ADD_FILM = ""
-            + "INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id) "
-            + "VALUES(?, ?, ?, ?, ?)";
-    private static final String SQL_GET_FILM_WITHOUT_ID = ""
-            + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id "
-            + "FROM films "
-            + "WHERE name='%s' "
-            + "AND description='%s' "
-            + "AND release_date='%s' "
-            + "AND duration_in_minutes=%d "
-            + "AND mpa_rating_id=%d";
-    private static final String SQL_UPDATE_FILM_WITH_ID = ""
-            + "UPDATE films SET name=?, description=?, release_date=?, duration_in_minutes=?, mpa_rating_id=?"
-            + "WHERE film_id=?";
-    private static final String SQL_GET_FILM_WITH_ID = ""
-            + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id FROM films "
-            + "WHERE film_id=%d";
-    private static final String SQL_GET_ALL = ""
-            + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id "
-            + "FROM films";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -56,19 +35,27 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film add(@NonNull Film film) {
         log.debug("add({}).", film);
-        jdbcTemplate.update(SQL_ADD_FILM,
+        jdbcTemplate.update(""
+                        + "INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id) "
+                        + "VALUES(?, ?, ?, ?, ?)",
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
                 film.getMpa().getId());
-        Film result = Objects.requireNonNull(
-                jdbcTemplate.queryForObject(format(SQL_GET_FILM_WITHOUT_ID,
-                        film.getName(),
-                        film.getDescription(),
-                        Date.valueOf(film.getReleaseDate()),
-                        film.getDuration(),
-                        film.getMpa().getId()), new FilmMapper()));
+        Film result = jdbcTemplate.queryForObject(format(""
+                        + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id "
+                        + "FROM films "
+                        + "WHERE name='%s' "
+                        + "AND description='%s' "
+                        + "AND release_date='%s' "
+                        + "AND duration_in_minutes=%d "
+                        + "AND mpa_rating_id=%d",
+                film.getName(),
+                film.getDescription(),
+                Date.valueOf(film.getReleaseDate()),
+                film.getDuration(),
+                film.getMpa().getId()), new FilmMapper());
         log.trace("В хранилище добавлен фильм: {}.", result);
         return result;
     }
@@ -76,15 +63,17 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film update(@NonNull Film film) {
         log.debug("update({}).", film);
-        jdbcTemplate.update(SQL_UPDATE_FILM_WITH_ID,
+        jdbcTemplate.update(""
+                        + "UPDATE films "
+                        + "SET name=?, description=?, release_date=?, duration_in_minutes=?, mpa_rating_id=?"
+                        + "WHERE film_id=?",
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
-        Film result = Objects.requireNonNull(jdbcTemplate.queryForObject(
-                format(SQL_GET_FILM_WITH_ID, film.getId()), new FilmMapper()));
+        Film result = get(film.getId());
         log.trace("Обновлён фильм: {}.", result);
         return result;
     }
@@ -92,8 +81,9 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film get(long filmID) {
         log.debug("get({}).", filmID);
-        Film film = jdbcTemplate.queryForObject(
-                format(SQL_GET_FILM_WITH_ID, filmID), new FilmMapper());
+        Film film = jdbcTemplate.queryForObject(format(""
+                + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id FROM films "
+                + "WHERE film_id=%d", filmID), new FilmMapper());
         log.trace("Возвращён фильм: {}", film);
         return film;
     }
@@ -101,7 +91,9 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Collection<Film> getAll() {
         log.debug("getAll().");
-        List<Film> films = jdbcTemplate.query(SQL_GET_ALL, new FilmMapper());
+        List<Film> films = jdbcTemplate.query(""
+                + "SELECT film_id, name, description, release_date, duration_in_minutes, mpa_rating_id "
+                + "FROM films", new FilmMapper());
         log.trace("Возвращены все фильмы: {}.", films);
         return films;
     }
@@ -110,7 +102,7 @@ public class FilmDbStorage implements Storage<Film> {
     public boolean contains(long filmID) {
         log.debug("contains({}).", filmID);
         try {
-            jdbcTemplate.queryForObject(format(SQL_GET_FILM_WITH_ID, filmID), new FilmMapper());
+            get(filmID);
             log.trace("Найден фильм ID_{}.", filmID);
             return true;
         } catch (EmptyResultDataAccessException ex) {
@@ -132,7 +124,6 @@ public class FilmDbStorage implements Storage<Film> {
             film.setReleaseDate(rs.getDate("release_date").toLocalDate());
             film.setDuration(rs.getInt("duration_in_minutes"));
             film.setMpa(mpa);
-
             return film;
         }
     }
