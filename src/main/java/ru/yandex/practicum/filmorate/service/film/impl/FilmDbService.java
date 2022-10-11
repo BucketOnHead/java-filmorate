@@ -90,7 +90,7 @@ public class FilmDbService implements FilmService {
     @Override
     public Film get(long filmID) {
         if (!filmStorage.contains(filmID)) {
-            log.warn("Не удалось добавить фильм: {}.", format(FILM_NOT_FOUND, filmID));
+            log.warn("Не удалось вернуть фильм: {}.", format(FILM_NOT_FOUND, filmID));
             throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
         }
         Film film = filmStorage.get(filmID);
