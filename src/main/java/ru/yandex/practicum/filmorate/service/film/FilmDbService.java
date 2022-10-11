@@ -13,12 +13,11 @@ import ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundExceptio
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
-import ru.yandex.practicum.filmorate.model.user.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,14 +36,14 @@ import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundE
 @Service("FilmDbService")
 public class FilmDbService implements FilmService {
     private final FilmStorage filmStorage;
-    private final Storage<User> userStorage;
+    private final UserStorage userStorage;
     private final GenreDao genreDao;
     private final LikeDao likeDao;
     private final MpaDao mpaDao;
 
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage") FilmStorage filmStorage,
-                         @Qualifier("UserDbStorage") Storage<User> userStorage,
+                         @Qualifier("UserDbStorage") UserStorage userStorage,
                          GenreDao genreDao,
                          LikeDao likeDao,
                          MpaDao mpaDao) {

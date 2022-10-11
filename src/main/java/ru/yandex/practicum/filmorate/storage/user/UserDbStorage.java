@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.user.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -21,7 +20,7 @@ import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
 @Component("UserDbStorage")
-public class UserDbStorage implements Storage<User> {
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired

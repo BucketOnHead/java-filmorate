@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.Friendship
 import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.dao.friendship.FriendshipDao;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +28,11 @@ import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundE
 @Slf4j
 @Service("UserDbService")
 public class UserDbService implements UserService {
-    private final Storage<User> userStorage;
+    private final UserStorage userStorage;
     private final FriendshipDao friendshipDao;
 
     @Autowired
-    public UserDbService(@Qualifier("UserDbStorage") Storage<User> userStorage,
+    public UserDbService(@Qualifier("UserDbStorage") UserStorage userStorage,
                          FriendshipDao friendshipDao) {
         log.debug("UserDbService({}, {}).",
                 userStorage.getClass().getSimpleName(),
