@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundEx
 import ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.storage.film.LikeAlreadyExistsException;
+import ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
@@ -27,6 +29,8 @@ import static ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNot
 import static ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException.MPA_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException.FILM_NOT_FOUND;
+import static ru.yandex.practicum.filmorate.exception.storage.film.LikeAlreadyExistsException.LIKE_ALREADY_EXISTS;
+import static ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundException.LIKE_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 
 @Slf4j
@@ -158,6 +162,10 @@ public class FilmDbService implements FilmService {
             log.warn("Не удалось добавить лайк: {}.", format(USER_NOT_FOUND, userID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
         }
+        if (likeDao.contains(filmID, userID)) {
+            log.warn("Не удалось добавить лайк: {}.", format(LIKE_ALREADY_EXISTS, filmID, userID));
+            throw new LikeAlreadyExistsException(format(LIKE_ALREADY_EXISTS, filmID, userID));
+        }
         likeDao.add(filmID, userID);
     }
 
@@ -171,6 +179,10 @@ public class FilmDbService implements FilmService {
         if (!userStorage.contains(userID)) {
             log.warn("Не удалось удалить лайк: {}.", format(USER_NOT_FOUND, userID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+        }
+        if (!likeDao.contains(filmID, userID)) {
+            log.warn("Не удалось удалить лайк: {}.", format(LIKE_NOT_FOUND, filmID, userID));
+            throw new LikeNotFoundException(format(LIKE_NOT_FOUND, filmID, userID));
         }
         likeDao.delete(filmID, userID);
     }

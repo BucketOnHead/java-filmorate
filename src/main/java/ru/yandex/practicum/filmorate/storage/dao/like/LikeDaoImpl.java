@@ -6,15 +6,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.film.LikeAlreadyExistsException;
-import ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundException;
 import ru.yandex.practicum.filmorate.model.Like;
 
 import java.util.Objects;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.film.LikeAlreadyExistsException.LIKE_ALREADY_EXISTS;
-import static ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundException.LIKE_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -48,10 +44,6 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public void add(long filmID, long userID) {
         log.debug("add({}, {}).", filmID, userID);
-        if (contains(filmID, userID)) {
-            log.warn("Не удалось добавить лайк: {}.", format(LIKE_ALREADY_EXISTS, filmID, userID));
-            throw new LikeAlreadyExistsException(format(LIKE_ALREADY_EXISTS, filmID, userID));
-        }
         jdbcTemplate.update(SQL_ADD_LIKE, filmID, userID);
         log.trace("Фильму ID_{} добавлен лайк от пользователя ID_{}.", filmID, userID);
     }
@@ -59,10 +51,6 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public void delete(long filmID, long userID) {
         log.debug("delete({}, {}).", filmID, userID);
-        if (!contains(filmID, userID)) {
-            log.warn("Не удалось удалить лайк: {}.", format(LIKE_NOT_FOUND, filmID, userID));
-            throw new LikeNotFoundException(format(LIKE_NOT_FOUND, filmID, userID));
-        }
         jdbcTemplate.update(SQL_DELETE_LIKE, filmID, userID);
         log.trace("У фильма ID_{} удалён лайк от пользователя ID_{}.", filmID, userID);
     }
