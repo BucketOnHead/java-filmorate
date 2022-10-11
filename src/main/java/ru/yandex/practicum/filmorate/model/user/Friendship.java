@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model.user;
 import lombok.*;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Friendship {
