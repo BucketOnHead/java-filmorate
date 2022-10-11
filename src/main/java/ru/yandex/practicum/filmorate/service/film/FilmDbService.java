@@ -161,6 +161,7 @@ public class FilmDbService implements FilmService {
      *                                    жанра не найден.
      */
     private void checkFilmToAdd(Film film) {
+        log.debug("checkFilmToAdd({}).", film);
         String msg = "Не удалось добавить фильм: {}.";
         if (film.getId() != 0) {
             if (filmStorage.contains(film.getId())) {
@@ -196,6 +197,7 @@ public class FilmDbService implements FilmService {
      *                                жанра не найден.
      */
     private void checkFilmToUpdate(Film film) {
+        log.debug("checkFilmToUpdate({}).", film);
         String msg = "Не удалось обновить фильм: {}.";
         if (!filmStorage.contains(film.getId())) {
             log.warn(msg, format(FILM_NOT_FOUND, film.getId()));
@@ -230,6 +232,7 @@ public class FilmDbService implements FilmService {
      *                                    уже ставил лайк фильму.
      */
     private void checkLikeToAdd(long filmID, long userID) {
+        log.debug("checkLikeToAdd({}, {}).", filmID, userID);
         String msg = "Не удалось добавить лайк: {}.";
         if (!filmStorage.contains(filmID)) {
             log.warn(msg, format(FILM_NOT_FOUND, filmID));
@@ -262,6 +265,7 @@ public class FilmDbService implements FilmService {
      *                               не ставил лайк фильму.
      */
     private void checkLikeToDelete(long filmID, long userID) {
+        log.debug("checkLikeToDelete({}, {}).", filmID, userID);
         String msg = "Не удалось удалить лайк: {}.";
         if (!filmStorage.contains(filmID)) {
             log.warn(msg, format(FILM_NOT_FOUND, filmID));
