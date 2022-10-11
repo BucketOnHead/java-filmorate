@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException.GENRE_NOT_FOUND;
+import static ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException.MPA_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException.FILM_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
@@ -90,6 +92,11 @@ public class FilmDbService implements FilmService {
             log.warn("Не удалось обновить фильм: {}.", format(FILM_NOT_FOUND, film.getId()));
             throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
         }
+        if (!mpaDao.contains(film.getMpa().getId())) {
+            log.warn("Не удалось вернуть рейтинг MPA: {}.",
+                    format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+        }
         Film result = filmStorage.update(film);
         genreDao.update(result.getId(), film.getGenres());
         result.setGenres(genreDao.getGenres(result.getId()));
@@ -105,6 +112,11 @@ public class FilmDbService implements FilmService {
         }
         Film film = filmStorage.get(filmID);
         film.setGenres(genreDao.getGenres(filmID));
+        if (!mpaDao.contains(film.getMpa().getId())) {
+            log.warn("Не удалось вернуть рейтинг MPA: {}.",
+                    format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+        }
         film.setMpa(mpaDao.get(film.getMpa().getId()));
         return film;
     }
@@ -114,6 +126,11 @@ public class FilmDbService implements FilmService {
         var films = filmStorage.getAll();
         for (Film film : films) {
             film.setGenres(genreDao.getGenres(film.getId()));
+            if (!mpaDao.contains(film.getMpa().getId())) {
+                log.warn("Не удалось вернуть рейтинг MPA: {}.",
+                        format(MPA_NOT_FOUND, film.getMpa().getId()));
+                throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+            }
             film.setMpa(mpaDao.get(film.getMpa().getId()));
         }
         return films;

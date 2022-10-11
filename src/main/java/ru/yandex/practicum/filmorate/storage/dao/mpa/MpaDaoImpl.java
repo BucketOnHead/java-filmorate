@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 
 import java.sql.ResultSet;
@@ -15,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException.MPA_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -41,10 +39,6 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Mpa get(int mpaID) {
         log.debug("get({}).", mpaID);
-        if (!contains(mpaID)) {
-            log.warn("Не удалось вернуть рейтинг MPA: {}.", format(MPA_NOT_FOUND, mpaID));
-            throw new MpaNotFoundException(format(MPA_NOT_FOUND, mpaID));
-        }
         Mpa mpa = jdbcTemplate.queryForObject(format(SQL_GET_MPA, mpaID), new MpaMapper());
         log.trace("Возвращён рейтинг MPA: {}.", mpa);
         return mpa;
