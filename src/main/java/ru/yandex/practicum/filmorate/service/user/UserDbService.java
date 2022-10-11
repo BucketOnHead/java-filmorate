@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.user.impl;
+package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.Friendship
 import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
-import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.dao.friendship.FriendshipDao;
 
