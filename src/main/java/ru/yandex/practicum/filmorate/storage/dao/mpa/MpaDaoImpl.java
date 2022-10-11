@@ -19,14 +19,6 @@ import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 @Slf4j
 @Component
 public class MpaDaoImpl implements MpaDao {
-    private static final String SQL_GET_MPA = ""
-            + "SELECT mpa_rating_id, name "
-            + "FROM mpa_ratings "
-            + "WHERE mpa_rating_id=%d";
-    private static final String SQL_GET_ALL_ORDER_BY_MPA_RATING_ID = ""
-            + "SELECT mpa_rating_id, name "
-            + "FROM mpa_ratings "
-            + "ORDER BY mpa_rating_id";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -39,7 +31,10 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Mpa get(int mpaID) {
         log.debug("get({}).", mpaID);
-        Mpa mpa = jdbcTemplate.queryForObject(format(SQL_GET_MPA, mpaID), new MpaMapper());
+        Mpa mpa = jdbcTemplate.queryForObject(format(""
+                + "SELECT mpa_rating_id, name "
+                + "FROM mpa_ratings "
+                + "WHERE mpa_rating_id=%d", mpaID), new MpaMapper());
         log.trace("Возвращён рейтинг MPA: {}.", mpa);
         return mpa;
     }
@@ -47,8 +42,10 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Collection<Mpa> getAll() {
         log.debug("getAll().");
-        List<Mpa> result = jdbcTemplate.query(SQL_GET_ALL_ORDER_BY_MPA_RATING_ID,
-                new MpaMapper());
+        List<Mpa> result = jdbcTemplate.query(""
+                        + "SELECT mpa_rating_id, name "
+                        + "FROM mpa_ratings "
+                        + "ORDER BY mpa_rating_id", new MpaMapper());
         log.trace("Возвращены все рейтинги MPA: {}.", result);
         return result;
     }
@@ -57,7 +54,7 @@ public class MpaDaoImpl implements MpaDao {
     public boolean contains(int mpaID) {
         log.debug("contains({}).", mpaID);
         try {
-            jdbcTemplate.queryForObject(format(SQL_GET_MPA, mpaID), new MpaMapper());
+            get(mpaID);
             log.trace("Рейтинг MPA ID_{} найден.", mpaID);
             return true;
         } catch (EmptyResultDataAccessException ex) {
