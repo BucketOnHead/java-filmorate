@@ -40,7 +40,7 @@ public class UserDbService implements UserService {
         this.userStorage = userStorage;
         log.info(DEPENDENCY_MESSAGE, userStorage.getClass().getName());
         this.friendshipDao = friendshipDao;
-        log.info(DEPENDENCY_MESSAGE, friendshipDao.getClass().getSimpleName());
+        log.info(DEPENDENCY_MESSAGE, friendshipDao.getClass().getName());
     }
 
     @Override
