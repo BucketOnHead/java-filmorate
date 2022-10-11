@@ -73,8 +73,8 @@ public class FilmDbService implements FilmService {
         }
         for (Genre genre : film.getGenres()) {
             if (!genreDao.contains(genre.getId())) {
-                log.warn("Фильму ID_{} не удалось добавлен жанр ID_{}: {}.",
-                        film.getId(), genre.getId(), format(GENRE_NOT_FOUND, genre.getId()));
+                log.warn("Фильму ID_{} не удалось добавить жанр: {}.",
+                        film.getId(), format(GENRE_NOT_FOUND, genre.getId()));
                 throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
             }
         }

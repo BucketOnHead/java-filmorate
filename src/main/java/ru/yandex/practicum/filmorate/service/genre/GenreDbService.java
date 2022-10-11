@@ -30,7 +30,7 @@ public class GenreDbService implements GenreService {
             throw new IllegalArgumentException("genreID должен быть типа INTEGER");
         }
         if (!genreDao.contains((int) genreID)) {
-            log.warn("Не удалось вернуть жанр ID_{}: {}.", genreID, format(GENRE_NOT_FOUND, genreID));
+            log.warn("Не удалось вернуть жанр: {}.", format(GENRE_NOT_FOUND, genreID));
             throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genreID));
         }
         return genreDao.get((int) genreID);
