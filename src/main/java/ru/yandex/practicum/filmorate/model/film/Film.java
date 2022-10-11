@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model.film;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.annotation.AfterCinemaBirthday;
 
@@ -14,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 public class Film {
     private long id;
 
@@ -37,11 +35,9 @@ public class Film {
     @NotNull(message = "У фильма должен быть указан рейтинг MPA")
     private Mpa mpa;
 
-    @Builder.Default
     private Set<Genre> genres = new HashSet<>();
 
     @JsonIgnore
-    @Builder.Default
     private Set<Long> likes = new HashSet<>();
 
     public Set<Genre> getGenres() {

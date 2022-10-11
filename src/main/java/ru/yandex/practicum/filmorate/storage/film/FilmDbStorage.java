@@ -143,16 +143,18 @@ public class FilmDbStorage implements Storage<Film> {
     private static class FilmMapper implements RowMapper<Film> {
         @Override
         public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return Film.builder()
-                    .id(rs.getLong("film_id"))
-                    .name(rs.getString("name"))
-                    .description(rs.getString("description"))
-                    .releaseDate(rs.getDate("release_date").toLocalDate())
-                    .duration(rs.getInt("duration_in_minutes"))
-                    .mpa(new Mpa(
-                            rs.getInt("mpa_rating_id"),
-                            "null"))
-                    .build();
+            Mpa mpa = new Mpa();
+            mpa.setId(rs.getInt("mpa_rating_id"));
+
+            Film film = new Film();
+            film.setId(rs.getLong("film_id"));
+            film.setName(rs.getString("name"));
+            film.setDescription(rs.getString("description"));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration_in_minutes"));
+            film.setMpa(mpa);
+
+            return film;
         }
     }
 }
