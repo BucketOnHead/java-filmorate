@@ -7,8 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
-import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException.USER_ALREADY_EXISTS;
-import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -57,16 +53,6 @@ public class UserDbStorage implements Storage<User> {
     @Override
     public User add(@NonNull User user) {
         log.debug("add({}).", user);
-        if (user.getId() != 0) {
-            if (contains(user.getId())) {
-                log.warn("Не удалось добавить пользователя: {}.",
-                        format(USER_ALREADY_EXISTS, user.getId()));
-                throw new UserAlreadyExistsException(format(USER_ALREADY_EXISTS, user.getId()));
-            } else {
-                log.warn("Не удалось добавить пользователя: {}.", "Запрещено устанавливать ID вручную");
-                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
-            }
-        }
         jdbcTemplate.update(SQL_ADD_USER,
                 user.getEmail(),
                 user.getLogin(),
@@ -81,10 +67,6 @@ public class UserDbStorage implements Storage<User> {
     @Override
     public User update(@NonNull User user) {
         log.debug("update({}).", user);
-        if (!contains(user.getId())) {
-            log.warn("Пользователь не обновлён: {}.", format(USER_NOT_FOUND, user.getId()));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, user.getId()));
-        }
         jdbcTemplate.update(SQL_GET_USER_WITH_ID,
                 user.getEmail(),
                 user.getLogin(),
@@ -101,10 +83,6 @@ public class UserDbStorage implements Storage<User> {
     @Override
     public User get(long userID) {
         log.debug("get({}).", userID);
-        if (!contains(userID)) {
-            log.warn("Не удалось вернуть пользователя: {}.", format(USER_NOT_FOUND, userID));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
-        }
         User user = jdbcTemplate.queryForObject(
                 format(SQL_GET_USER_WITH_ID_2, userID), new UserMapper());
         log.trace("Возвращён пользователь: {}", user);

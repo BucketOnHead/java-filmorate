@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.service.user.UserLogicException;
+import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static ru.yandex.practicum.filmorate.exception.service.user.UserLogicException.*;
+import static ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException.USER_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 
 @Slf4j
@@ -40,16 +42,34 @@ public class UserDbService implements UserService {
 
     @Override
     public User add(User user) {
+        if (user.getId() != 0) {
+            if (userStorage.contains(user.getId())) {
+                log.warn("Не удалось добавить пользователя: {}.",
+                        format(USER_ALREADY_EXISTS, user.getId()));
+                throw new UserAlreadyExistsException(format(USER_ALREADY_EXISTS, user.getId()));
+            } else {
+                log.warn("Не удалось добавить пользователя: {}.", "Запрещено устанавливать ID вручную");
+                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
+            }
+        }
         return userStorage.add(user);
     }
 
     @Override
     public User update(User user) {
+        if (!userStorage.contains(user.getId())) {
+            log.warn("Пользователь не обновлён: {}.", format(USER_NOT_FOUND, user.getId()));
+            throw new UserNotFoundException(format(USER_NOT_FOUND, user.getId()));
+        }
         return userStorage.update(user);
     }
 
     @Override
     public User get(long userID) {
+        if (!userStorage.contains(userID)) {
+            log.warn("Не удалось вернуть пользователя: {}.", format(USER_NOT_FOUND, userID));
+            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+        }
         return userStorage.get(userID);
     }
 
@@ -73,7 +93,6 @@ public class UserDbService implements UserService {
             log.warn("Не удалось добавить друга: {}.", format(USER_NOT_FOUND, friendID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, friendID));
         }
-
         boolean isMutual = userStorage.get(friendID).getFriends().contains(userID);
         friendshipDao.add(friendID, userID, isMutual);
         log.trace("Добавлен друг ID_{} к пользователю ID_{}.", friendID, userID);
