@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException.FILM_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 
@@ -57,6 +59,15 @@ public class FilmDbService implements FilmService {
 
     @Override
     public Film add(Film film) {
+        if (film.getId() != 0) {
+            if (filmStorage.contains(film.getId())) {
+                log.warn("Не удалось добавить фильм: {}.", format(FILM_ALREADY_EXISTS, film.getId()));
+                throw new FilmAlreadyExistsException(format(FILM_ALREADY_EXISTS, film.getId()));
+            } else {
+                log.warn("Не удалось добавить фильм: {}.", "Запрещено устанавливать ID вручную");
+                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
+            }
+        }
         Film result = filmStorage.add(film);
         genreDao.add(result.getId(), film.getGenres());
         result.setGenres(genreDao.getGenres(result.getId()));
@@ -65,6 +76,10 @@ public class FilmDbService implements FilmService {
 
     @Override
     public Film update(Film film) {
+        if (!filmStorage.contains(film.getId())) {
+            log.warn("Не удалось обновить фильм: {}.", format(FILM_NOT_FOUND, film.getId()));
+            throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
+        }
         Film result = filmStorage.update(film);
         genreDao.update(result.getId(), film.getGenres());
         result.setGenres(genreDao.getGenres(result.getId()));
@@ -74,6 +89,10 @@ public class FilmDbService implements FilmService {
 
     @Override
     public Film get(long filmID) {
+        if (!filmStorage.contains(filmID)) {
+            log.warn("Не удалось добавить фильм: {}.", format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+        }
         Film film = filmStorage.get(filmID);
         film.setGenres(genreDao.getGenres(filmID));
         film.setMpa(mpaDao.get(film.getMpa().getId()));

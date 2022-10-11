@@ -7,8 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException;
-import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.Storage;
@@ -21,8 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
-import static ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException.FILM_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -60,15 +56,6 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film add(@NonNull Film film) {
         log.debug("add({}).", film);
-        if (film.getId() != 0) {
-            if (contains(film.getId())) {
-                log.warn("Не удалось добавить фильм: {}.", format(FILM_ALREADY_EXISTS, film.getId()));
-                throw new FilmAlreadyExistsException(format(FILM_ALREADY_EXISTS, film.getId()));
-            } else {
-                log.warn("Не удалось добавить фильм: {}.", "Запрещено устанавливать ID вручную");
-                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
-            }
-        }
         jdbcTemplate.update(SQL_ADD_FILM,
                 film.getName(),
                 film.getDescription(),
@@ -89,10 +76,6 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film update(@NonNull Film film) {
         log.debug("update({}).", film);
-        if (!contains(film.getId())) {
-            log.warn("Не удалось обновить фильм: {}.", format(FILM_NOT_FOUND, film.getId()));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
-        }
         jdbcTemplate.update(SQL_UPDATE_FILM_WITH_ID,
                 film.getName(),
                 film.getDescription(),
@@ -109,10 +92,6 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public Film get(long filmID) {
         log.debug("get({}).", filmID);
-        if (!contains(filmID)) {
-            log.warn("Не удалось добавить фильм: {}.", format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
-        }
         Film film = jdbcTemplate.queryForObject(
                 format(SQL_GET_FILM_WITH_ID, filmID), new FilmMapper());
         log.trace("Возвращён фильм: {}", film);
