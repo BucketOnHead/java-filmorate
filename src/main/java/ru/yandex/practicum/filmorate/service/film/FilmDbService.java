@@ -67,22 +67,7 @@ public class FilmDbService implements FilmService {
 
     @Override
     public Film add(Film film) {
-        if (film.getId() != 0) {
-            if (filmStorage.contains(film.getId())) {
-                log.warn("Не удалось добавить фильм: {}.", format(FILM_ALREADY_EXISTS, film.getId()));
-                throw new FilmAlreadyExistsException(format(FILM_ALREADY_EXISTS, film.getId()));
-            } else {
-                log.warn("Не удалось добавить фильм: {}.", "Запрещено устанавливать ID вручную");
-                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
-            }
-        }
-        for (Genre genre : film.getGenres()) {
-            if (!genreDao.contains(genre.getId())) {
-                log.warn("Фильму ID_{} не удалось добавить жанр: {}.",
-                        film.getId(), format(GENRE_NOT_FOUND, genre.getId()));
-                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
-            }
-        }
+        checkFilmToAdd(film);
         Film result = filmStorage.add(film);
         filmStorage.addGenres(result.getId(), film.getGenres());
         result.setGenres(filmStorage.getGenres(result.getId()));
@@ -91,15 +76,7 @@ public class FilmDbService implements FilmService {
 
     @Override
     public Film update(Film film) {
-        if (!filmStorage.contains(film.getId())) {
-            log.warn("Не удалось обновить фильм: {}.", format(FILM_NOT_FOUND, film.getId()));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
-        }
-        if (!mpaDao.contains(film.getMpa().getId())) {
-            log.warn("Не удалось вернуть рейтинг MPA: {}.",
-                    format(MPA_NOT_FOUND, film.getMpa().getId()));
-            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
-        }
+        checkFilmToUpdate(film);
         Film result = filmStorage.update(film);
         filmStorage.updateGenres(result.getId(), film.getGenres());
         result.setGenres(filmStorage.getGenres(result.getId()));
@@ -115,11 +92,6 @@ public class FilmDbService implements FilmService {
         }
         Film film = filmStorage.get(filmID);
         film.setGenres(filmStorage.getGenres(filmID));
-        if (!mpaDao.contains(film.getMpa().getId())) {
-            log.warn("Не удалось вернуть рейтинг MPA: {}.",
-                    format(MPA_NOT_FOUND, film.getMpa().getId()));
-            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
-        }
         film.setMpa(mpaDao.get(film.getMpa().getId()));
         return film;
     }
@@ -129,11 +101,6 @@ public class FilmDbService implements FilmService {
         var films = filmStorage.getAll();
         for (Film film : films) {
             film.setGenres(filmStorage.getGenres(film.getId()));
-            if (!mpaDao.contains(film.getMpa().getId())) {
-                log.warn("Не удалось вернуть рейтинг MPA: {}.",
-                        format(MPA_NOT_FOUND, film.getMpa().getId()));
-                throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
-            }
             film.setMpa(mpaDao.get(film.getMpa().getId()));
         }
         return films;
@@ -152,37 +119,13 @@ public class FilmDbService implements FilmService {
 
     @Override
     public void addLike(long filmID, long userID) {
-        log.debug("addLike({}, {}).", filmID, userID);
-        if (!filmStorage.contains(filmID)) {
-            log.warn("Не удалось добавить лайк: {}.", format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
-        }
-        if (!userStorage.contains(userID)) {
-            log.warn("Не удалось добавить лайк: {}.", format(USER_NOT_FOUND, userID));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
-        }
-        if (likeDao.contains(filmID, userID)) {
-            log.warn("Не удалось добавить лайк: {}.", format(LIKE_ALREADY_EXISTS, filmID, userID));
-            throw new LikeAlreadyExistsException(format(LIKE_ALREADY_EXISTS, filmID, userID));
-        }
+        checkLikeToAdd(filmID, userID);
         likeDao.add(filmID, userID);
     }
 
     @Override
     public void deleteLike(long filmID, long userID) {
-        log.debug("deleteLike({}, {}).", filmID, userID);
-        if (!filmStorage.contains(filmID)) {
-            log.warn("Не удалось удалить лайк: {}.", format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
-        }
-        if (!userStorage.contains(userID)) {
-            log.warn("Не удалось удалить лайк: {}.", format(USER_NOT_FOUND, userID));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
-        }
-        if (!likeDao.contains(filmID, userID)) {
-            log.warn("Не удалось удалить лайк: {}.", format(LIKE_NOT_FOUND, filmID, userID));
-            throw new LikeNotFoundException(format(LIKE_NOT_FOUND, filmID, userID));
-        }
+        checkLikeToDelete(filmID, userID);
         likeDao.delete(filmID, userID);
     }
 
@@ -200,5 +143,137 @@ public class FilmDbService implements FilmService {
      */
     private int likeCompare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.count(otherFilm.getId()), likeDao.count(film.getId()));
+    }
+
+    /**
+     * Метод проверяет корреткность фильма,
+     * для последующего добавления в хранилище.
+     *
+     * @param film объект фильма.
+     * @throws FilmAlreadyExistsException в случае, если фильм
+     *                                    уже присутствует в хранилище.
+     * @throws IllegalArgumentException   в случае, если фильму
+     *                                    задан идентификатор,
+     *                                    отличающийся от 0.
+     * @throws MpaNotFoundException       в случае, если идентификатор
+     *                                    рейтинга MPA не найден.
+     * @throws GenreNotFoundException     в случае, если идентификатор
+     *                                    жанра не найден.
+     */
+    private void checkFilmToAdd(Film film) {
+        String msg = "Не удалось добавить фильм: {}.";
+        if (film.getId() != 0) {
+            if (filmStorage.contains(film.getId())) {
+                log.warn(msg, format(FILM_ALREADY_EXISTS, film.getId()));
+                throw new FilmAlreadyExistsException(format(FILM_ALREADY_EXISTS, film.getId()));
+            } else {
+                log.warn(msg, "Запрещено устанавливать ID вручную");
+                throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
+            }
+        }
+        if (!mpaDao.contains(film.getMpa().getId())) {
+            log.warn(msg, format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+        }
+        for (Genre genre : film.getGenres()) {
+            if (!genreDao.contains(genre.getId())) {
+                log.warn(msg, format(GENRE_NOT_FOUND, genre.getId()));
+                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
+            }
+        }
+    }
+
+    /**
+     * Метод проверяет корреткность фильма,
+     * для последующего обновления в хранилище.
+     *
+     * @param film объект фильма.
+     * @throws FilmNotFoundException  в случае, если фильм
+     *                                отсутствует в хранилище.
+     * @throws MpaNotFoundException   в случае, если идентификатор
+     *                                рейтинга MPA не найден.
+     * @throws GenreNotFoundException в случае, если идентификатор
+     *                                жанра не найден.
+     */
+    private void checkFilmToUpdate(Film film) {
+        String msg = "Не удалось обновить фильм: {}.";
+        if (!filmStorage.contains(film.getId())) {
+            log.warn(msg, format(FILM_NOT_FOUND, film.getId()));
+            throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
+        }
+        if (!mpaDao.contains(film.getMpa().getId())) {
+            log.warn(msg, format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+        }
+        for (Genre genre : film.getGenres()) {
+            if (!genreDao.contains(genre.getId())) {
+                log.warn(msg, format(GENRE_NOT_FOUND, genre.getId()));
+                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
+            }
+        }
+    }
+
+    /**
+     * Метод проверяет корреткность лайка
+     * пользователя, для последующего добавления
+     * в хранилище.
+     *
+     * @param filmID идентификатор фильма, которому
+     *               пользователь хочет поставить лайк.
+     * @param userID идентификатор пользователя, который
+     *               хочет поставить лайк.
+     * @throws FilmNotFoundException      в случае, если фильм
+     *                                    отсутствует в хранилище.
+     * @throws UserNotFoundException      в случае, если пользователь
+     *                                    отсутствует в хранилище.
+     * @throws LikeAlreadyExistsException в случае, если пользователь
+     *                                    уже ставил лайк фильму.
+     */
+    private void checkLikeToAdd(long filmID, long userID) {
+        String msg = "Не удалось добавить лайк: {}.";
+        if (!filmStorage.contains(filmID)) {
+            log.warn(msg, format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+        }
+        if (!userStorage.contains(userID)) {
+            log.warn(msg, format(USER_NOT_FOUND, userID));
+            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+        }
+        if (likeDao.contains(filmID, userID)) {
+            log.warn(msg, format(LIKE_ALREADY_EXISTS, filmID, userID));
+            throw new LikeAlreadyExistsException(format(LIKE_ALREADY_EXISTS, filmID, userID));
+        }
+    }
+
+    /**
+     * Метод проверяет корреткность лайка
+     * пользователя, для последующего добавления
+     * в хранилище.
+     *
+     * @param filmID идентификатор фильма, которому
+     *               пользователь хочет поставить лайк.
+     * @param userID идентификатор пользователя, который
+     *               хочет поставить лайк.
+     * @throws FilmNotFoundException в случае, если фильм
+     *                               отсутствует в хранилище.
+     * @throws UserNotFoundException в случае, если пользователь
+     *                               отсутствует в хранилище.
+     * @throws LikeNotFoundException в случае, если пользователь
+     *                               не ставил лайк фильму.
+     */
+    private void checkLikeToDelete(long filmID, long userID) {
+        String msg = "Не удалось удалить лайк: {}.";
+        if (!filmStorage.contains(filmID)) {
+            log.warn(msg, format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+        }
+        if (!userStorage.contains(userID)) {
+            log.warn(msg, format(USER_NOT_FOUND, userID));
+            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+        }
+        if (!likeDao.contains(filmID, userID)) {
+            log.warn(msg, format(LIKE_NOT_FOUND, filmID, userID));
+            throw new LikeNotFoundException(format(LIKE_NOT_FOUND, filmID, userID));
+        }
     }
 }
