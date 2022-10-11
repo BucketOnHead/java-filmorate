@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.service.user.UserLogicException;
+import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipAlreadyExistsException;
+import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static ru.yandex.practicum.filmorate.exception.service.user.UserLogicException.*;
+import static ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipAlreadyExistsException.FRIENDSHIP_ALREADY_EXIST;
+import static ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipNotFoundException.FRIENDSHIP_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException.USER_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 
@@ -93,6 +97,12 @@ public class UserDbService implements UserService {
             log.warn("Не удалось добавить друга: {}.", format(USER_NOT_FOUND, friendID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, friendID));
         }
+        if (friendshipDao.contains(friendID, userID)) {
+            log.warn("Не удалось добавить запрос на дружбу: {}.",
+                    format(FRIENDSHIP_ALREADY_EXIST, friendID, userID));
+            throw new FriendshipAlreadyExistsException(
+                    format(FRIENDSHIP_ALREADY_EXIST, friendID, userID));
+        }
         boolean isMutual = userStorage.get(friendID).getFriends().contains(userID);
         friendshipDao.add(friendID, userID, isMutual);
         log.trace("Добавлен друг ID_{} к пользователю ID_{}.", friendID, userID);
@@ -112,6 +122,12 @@ public class UserDbService implements UserService {
         if (!userStorage.contains(friendID)) {
             log.warn("Не удалось удалить друга: {}.", format(USER_NOT_FOUND, friendID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, friendID));
+        }
+        if (!friendshipDao.contains(friendID, userID)) {
+            log.warn("Не удалось удалить запрос на дружбу: {}.",
+                    format(FRIENDSHIP_NOT_FOUND, friendID, userID));
+            throw new FriendshipNotFoundException(
+                    format(FRIENDSHIP_NOT_FOUND, friendID, userID));
         }
         friendshipDao.delete(friendID, userID);
         log.trace("Удалён друг ID_{} у пользователя ID_{}.", friendID, userID);

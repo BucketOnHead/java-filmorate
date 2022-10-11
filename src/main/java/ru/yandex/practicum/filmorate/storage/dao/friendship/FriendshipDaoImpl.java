@@ -6,8 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipAlreadyExistsException;
-import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.Friendship;
 
 import java.util.Collection;
@@ -16,8 +14,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipAlreadyExistsException.FRIENDSHIP_ALREADY_EXIST;
-import static ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipNotFoundException.FRIENDSHIP_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -58,12 +54,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
     @Override
     public void add(long fromUserID, long toUserID, boolean isMutual) {
         log.debug("add({}, {}, {}).", fromUserID, toUserID, isMutual);
-        if (contains(fromUserID, toUserID)) {
-            log.warn("Не удалось добавить запрос на дружбу: {}.",
-                    format(FRIENDSHIP_ALREADY_EXIST, fromUserID, toUserID));
-            throw new FriendshipAlreadyExistsException(
-                    format(FRIENDSHIP_ALREADY_EXIST, fromUserID, toUserID));
-        }
         jdbcTemplate.update(SQL_ADD_FRIENDSHIP, fromUserID, toUserID, isMutual);
         Friendship result = jdbcTemplate.queryForObject(
                 format(SQL_GET_FRIENDSHIP, fromUserID, toUserID),
@@ -74,12 +64,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
     @Override
     public void delete(long fromUserID, long toUserID) {
         log.debug("delete({}, {}).", fromUserID, toUserID);
-        if (!contains(fromUserID, toUserID)) {
-            log.warn("Не удалось удалить запрос на дружбу: {}.",
-                    format(FRIENDSHIP_NOT_FOUND, fromUserID, toUserID));
-            throw new FriendshipNotFoundException(
-                    format(FRIENDSHIP_NOT_FOUND, fromUserID, toUserID));
-        }
         Friendship result = Objects.requireNonNull(jdbcTemplate.queryForObject(
                 format(SQL_GET_FRIENDSHIP, fromUserID, toUserID),
                 new BeanPropertyRowMapper<>(Friendship.class)));
