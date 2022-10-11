@@ -37,7 +37,7 @@ public class FilmDbService implements FilmService {
                          GenreDao genreDao,
                          LikeDao likeDao,
                          MpaDao mpaDao) {
-        log.debug("FilmDbService({}, {}, {}, {}, {})",
+        log.debug("FilmDbService({}, {}, {}, {}, {}).",
                 filmStorage.getClass().getSimpleName(),
                 userStorage.getClass().getSimpleName(),
                 genreDao.getClass().getSimpleName(),
