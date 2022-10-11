@@ -96,6 +96,12 @@ public class GenreDaoImpl implements GenreDao {
         }
     }
 
+    /**
+     * Метод удаляет все связи фильма с
+     * жанрами.
+     *
+     * @param filmID идентификатор фильма.
+     */
     private void delete(long filmID) {
         log.debug("delete({}).", filmID);
         jdbcTemplate.update(""
