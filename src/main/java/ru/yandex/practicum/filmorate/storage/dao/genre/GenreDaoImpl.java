@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Genre;
 
 import java.sql.ResultSet;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException.GENRE_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
@@ -57,10 +55,6 @@ public class GenreDaoImpl implements GenreDao {
     public void add(long filmID, Set<Genre> genres) {
         log.debug("add({}, {})", filmID, genres);
         for (Genre genre : genres) {
-            if (!contains(genre.getId())) {
-                log.warn("Фильму ID_{} не удалось добавлен жанр ID_{}: {}.", filmID, genre.getId(), format(GENRE_NOT_FOUND, genre.getId()));
-                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
-            }
             jdbcTemplate.update(SQL_ADD_FILM_GENRES, filmID, genre.getId());
             log.trace("Фильму ID_{} добавлен жанр ID_{}.", filmID, genre.getId());
         }
@@ -76,10 +70,6 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public Genre get(int genreID) {
         log.debug("get({}).", genreID);
-        if (!contains(genreID)) {
-            log.warn("Не удалось вернуть жанр ID_{}: {}.", genreID, format(GENRE_NOT_FOUND, genreID));
-            throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genreID));
-        }
         Genre genre = jdbcTemplate.queryForObject(format(SQL_GET_GENRE, genreID), new GenreMapper());
         log.trace("Возвращён жанр: {}.", genre);
         return genre;

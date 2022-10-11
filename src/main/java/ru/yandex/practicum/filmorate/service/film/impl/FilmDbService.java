@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.storage.Storage;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException.GENRE_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundException.FILM_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
@@ -66,6 +69,13 @@ public class FilmDbService implements FilmService {
             } else {
                 log.warn("Не удалось добавить фильм: {}.", "Запрещено устанавливать ID вручную");
                 throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
+            }
+        }
+        for (Genre genre : film.getGenres()) {
+            if (!genreDao.contains(genre.getId())) {
+                log.warn("Фильму ID_{} не удалось добавлен жанр ID_{}: {}.",
+                        film.getId(), genre.getId(), format(GENRE_NOT_FOUND, genre.getId()));
+                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
             }
         }
         Film result = filmStorage.add(film);
