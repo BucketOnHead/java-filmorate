@@ -16,22 +16,6 @@ import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 @Slf4j
 @Component
 public class LikeDaoImpl implements LikeDao {
-    private static final String SQL_ADD_LIKE = ""
-            + "INSERT INTO film_likes (film_id, user_id) "
-            + "VALUES (?, ?)";
-    private static final String SQL_DELETE_LIKE = ""
-            + "DELETE FROM film_likes "
-            + "WHERE film_id=? "
-            + "AND user_id=?";
-    private static final String SQL_COUNT_LIKES = ""
-            + "SELECT COUNT(*) "
-            + "FROM film_likes "
-            + "WHERE film_id=%d";
-    private static final String SQL_GET_LIKE = ""
-            + "SELECT film_id, user_id "
-            + "FROM film_likes "
-            + "WHERE film_id=%d "
-            + "AND user_id=%d";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -44,14 +28,19 @@ public class LikeDaoImpl implements LikeDao {
     @Override
     public void add(long filmID, long userID) {
         log.debug("add({}, {}).", filmID, userID);
-        jdbcTemplate.update(SQL_ADD_LIKE, filmID, userID);
+        jdbcTemplate.update(""
+                + "INSERT INTO film_likes (film_id, user_id) "
+                + "VALUES (?, ?)", filmID, userID);
         log.trace("Фильму ID_{} добавлен лайк от пользователя ID_{}.", filmID, userID);
     }
 
     @Override
     public void delete(long filmID, long userID) {
         log.debug("delete({}, {}).", filmID, userID);
-        jdbcTemplate.update(SQL_DELETE_LIKE, filmID, userID);
+        jdbcTemplate.update(""
+                + "DELETE FROM film_likes "
+                + "WHERE film_id=? "
+                + "AND user_id=?", filmID, userID);
         log.trace("У фильма ID_{} удалён лайк от пользователя ID_{}.", filmID, userID);
     }
 
@@ -59,7 +48,10 @@ public class LikeDaoImpl implements LikeDao {
     public int count(long filmID) {
         log.debug("count({}).", filmID);
         Integer count = Objects.requireNonNull(
-                jdbcTemplate.queryForObject(format(SQL_COUNT_LIKES, filmID), Integer.class));
+                jdbcTemplate.queryForObject(format(""
+                        + "SELECT COUNT(*) "
+                        + "FROM film_likes "
+                        + "WHERE film_id=%d", filmID), Integer.class));
         log.trace("Подсчитано количество лайков для фильма ID_{}: {}.", filmID, count);
         return count;
     }
@@ -68,8 +60,11 @@ public class LikeDaoImpl implements LikeDao {
     public boolean contains(long filmID, long userID) {
         log.debug("contains({}, {}).", filmID, userID);
         try {
-            jdbcTemplate.queryForObject(
-                    format(SQL_GET_LIKE, filmID, userID), new BeanPropertyRowMapper<>(Like.class));
+            jdbcTemplate.queryForObject(format(""
+                    + "SELECT film_id, user_id "
+                    + "FROM film_likes "
+                    + "WHERE film_id=%d "
+                    + "AND user_id=%d", filmID, userID), new BeanPropertyRowMapper<>(Like.class));
             log.trace("Найден лайк у фильма ID_{} от пользователя ID_{}.", filmID, userID);
             return true;
         } catch (EmptyResultDataAccessException ex) {
