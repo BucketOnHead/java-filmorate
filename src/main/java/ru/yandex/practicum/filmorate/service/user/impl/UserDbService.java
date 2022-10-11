@@ -58,7 +58,7 @@ public class UserDbService implements UserService {
     @Override
     public User update(User user) {
         if (!userStorage.contains(user.getId())) {
-            log.warn("Пользователь не обновлён: {}.", format(USER_NOT_FOUND, user.getId()));
+            log.warn("Не удалось обновить пользователя: {}.", format(USER_NOT_FOUND, user.getId()));
             throw new UserNotFoundException(format(USER_NOT_FOUND, user.getId()));
         }
         return userStorage.update(user);
@@ -121,7 +121,7 @@ public class UserDbService implements UserService {
     public Collection<User> getFriends(long userID) {
         log.debug("getFriends({}).", userID);
         if (!userStorage.contains(userID)) {
-            log.warn("Список друзей не вовзращён: {}.", format(USER_NOT_FOUND, userID));
+            log.warn("Не удалось вернуть друзей: {}.", format(USER_NOT_FOUND, userID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
         }
         List<User> friends = friendshipDao.getFromUserID(userID).stream()
