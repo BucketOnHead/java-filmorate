@@ -18,10 +18,10 @@
 <details>
     <summary><h3>Для фильмов:</h3></summary>
         <ul>
-            <li>название не может быть пустым</li>
-            <li>максимальная длина описания — 200 символов</li>
-            <li>дата релиза — не раньше 28 декабря 1895 года*</li>
-            <li>продолжительность фильма должна быть положительной</li>
+            <li>Название не может быть пустым</li>
+            <li>Максимальная длина описания — 200 символов</li>
+            <li>Дата релиза — не раньше 28 декабря 1895 года*</li>
+            <li>Продолжительность фильма должна быть положительной</li>
         </ul>
         *28 декабря 1895 года считается днём рождения кино.
 </details>
@@ -29,10 +29,10 @@
 <details>
     <summary><h3>Для пользователей:</h3></summary>
         <ul>
-            <li>электронная почта не может быть пустой и должна содержать символ @</li>
-            <li>логин не может быть пустым и содержать пробелы</li>
-            <li>имя для отображения может быть пустым — в таком случае будет использован логин</li>
-            <li>дата рождения не может быть в будущем</li>
+            <li>Электронная почта не может быть пустой и должна содержать символ @</li>
+            <li>Логин не может быть пустым и содержать пробелы</li>
+            <li>Имя для отображения может быть пустым — в таком случае будет использован логин</li>
+            <li>Дата рождения не может быть в будущем</li>
         </ul>
 </details>
 
@@ -42,42 +42,158 @@
 
 ## Примеры запросов
 
+<!-- Начало блока с примерами запросов для фильмов  -->
 <details>
     <summary><h3>Для фильмов:</h3></summary>
-
-* Получение списка всех фильмов:
-
+    
+* `Создание` фильма:
+    
 ```SQL
-SELECT *
-FROM films;
+INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id)
+VALUES(?, ?, ?, ?, ?)
 ```
 
-* Получение информации по фильму по его id:
+* `Обновление` фильма:
+    
+```SQL
+UPDATE films
+SET name=?,
+    description=?,
+    release_date=?,
+    duration_in_minutes=?,
+    mpa_rating_id=?
+WHERE film_id=?
+```
+    
+* `Получение` фильма `по идентификатору`:
 
 ```SQL
-SELECT *
+SELECT films.*,
+       mpa_ratings.name,
+       COUNT(film_likes.user_id) AS rate
 FROM films
-WHERE films.film_id = ?;
+LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
+LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
+WHERE films.film_id=?
+GROUP BY films.film_id
 ```   
+    
+* `Получение всех` фильмов:
 
+```SQL
+SELECT films.*,
+       mpa_ratings.name,
+       COUNT(film_likes.user_id) AS rate
+FROM films
+LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
+LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
+GROUP BY films.film_id
+```
+    
+* `Получение популярных (по количеству лайков)` фильмов:
+```SQL
+SELECT films.*,
+       mpa_ratings.name,
+       COUNT(film_likes.user_id) AS rate
+FROM films
+LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
+LEFT OUTER JOIN film_likes ON films.film_id=film_likes.film_id
+GROUP BY films.film_id
+ORDER BY rate DESC
+LIMIT ?
+```
+    
+* `Добавление лайка`:
+```SQL
+INSERT INTO film_likes (film_id, user_id)
+VALUES (?, ?)
+``` 
+    
+* `Удаление лайка`:
+```SQL
+DELETE
+FROM film_likes
+WHERE film_id=?
+  AND user_id=?
+```
 </details>
+
+<!-- Конец блока с примерами запросов для фильмов  -->
+<!-- Начало Блока с примерами запросов для пользователей  -->
 
 <details>
     <summary><h3>Для пользователей:</h3></summary>
 
-* Получение списка всех пользователей:
-
+* `Создание` пользователя:
+   
 ```SQL
-SELECT *
-FROM users;
+INSERT INTO users (email, login, name, birthday)
+VALUES (?, ?, ?, ?)
 ```
-
-* Получение информации по пользователю по его id:
+    
+* `Обновление` пользователя:
+   
+```SQL
+UPDATE users
+SET email=?,
+    login=?,
+    name=?,
+    birthday=?
+WHERE user_id=?
+```
+    
+* `Получение` пользователя `по идентификатору`:
 
 ```SQL
 SELECT *
 FROM users
-WHERE users.user_id = ?; -- id пользователя
+WHERE user_id=?
 ```   
+    
+* `Получение всех` пользователей:
+    
+```SQL
+SELECT *
+FROM users
+``` 
+    
+* `Получение друзей` пользователя `по идентификатору`:
+    
+```SQL
+SELECT users.*
+FROM users
+INNER JOIN friendships ON users.user_id=friendships.to_user_id
+WHERE users.user_id=?
+``` 
+    
+* `Добавление друга`
+    
+```SQL
+INSERT INTO friendships (from_user_id, to_user_id, isMutual)
+VALUES(?, ?, ?)
+``` 
+   
+* `Удаление друга`
+    
+```SQL
+DELETE
+FROM friendships
+WHERE from_user_id=?
+  AND to_user_id=?
+``` 
+    
+* `Получение общих друзей`
+```SQL
+SELECT users.*
+FROM users
+INNER JOIN user_friends ON users.user_id=friendships.from_user_id
+WHERE friendships.from_user_id=?
 
+INTERSECT
+
+SELECT users.*
+FROM users
+INNER JOIN user_friends ON users.user_id = friendships.from_user_id
+WHERE friendships.from_user_id=?
+``` 
 </details>
