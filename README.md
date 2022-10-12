@@ -197,3 +197,49 @@ INNER JOIN user_friends ON users.user_id = friendships.from_user_id
 WHERE friendships.from_user_id=?
 ``` 
 </details>
+
+<!-- Конец блока с примерами запросов для пользователей  -->
+<!-- Начало Блока с примерами запросов для жанров  -->
+
+<details>
+    <summary><h3>Для жанров:</h3></summary>
+    
+* `Получение` жанра `по идентификатору`:
+    
+```SQL
+SELECT *
+FROM genres
+WHERE genre_id=?
+``` 
+    
+* `Получение всех` жанров:
+    
+```SQL
+SELECT *
+FROM genres
+```   
+</details>
+
+<!-- Конец блока с примерами запросов для жанров  -->
+<!-- Начало Блока с примерами запросов для рейтингов MPA  -->
+
+<details>
+    <summary><h3>Для рейтингов MPA:</h3></summary>
+    
+* `Получение` рейтинга MPA `по идентификатору`:
+    
+```SQL
+SELECT *
+FROM mpa_ratings
+WHERE mpa_rating_id=?
+``` 
+    
+* `Получение всех` рейтингов MPA:
+    
+```SQL
+SELECT *
+FROM mpa_ratings
+```   
+</details>
+
+<!-- Конец блока с примерами запросов для рейтингов MPA  -->
