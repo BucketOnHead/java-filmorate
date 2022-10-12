@@ -11,9 +11,7 @@
 > что же посмотреть вечером.
 
 ## Схема БД
-<a href="https://drawsql.app/teams/my-team-172/diagrams/java-filmorate" title="Перейти на сайт drawsql.app">
-    <img src="https://github.com/IvanMarakanov/java-filmorate/blob/main/src/main/resources/schema.png" alt="Нажмите, чтобы увидеть диаграмму" />
-</a>
+![](https://github.com/IvanMarakanov/java-filmorate/blob/main/src/main/resources/schema.png?raw=true)
 
 ## Примеры запросов
 <details>
