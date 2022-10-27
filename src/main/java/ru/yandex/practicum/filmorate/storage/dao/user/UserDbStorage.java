@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.dao.user;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,7 +30,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User add(@NonNull User user) {
+    public User add(User user) {
         log.debug("add({}).", user);
         jdbcTemplate.update(""
                         + "INSERT INTO users (email, login, name, birthday) "
@@ -49,7 +48,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User update(@NonNull User user) {
+    public User update(User user) {
         log.debug("update({}).", user);
         jdbcTemplate.update(""
                         + "UPDATE users "

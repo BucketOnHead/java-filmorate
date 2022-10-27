@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsExc
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.dao.friendship.FriendshipDao;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
 import java.util.Collection;
 import java.util.List;

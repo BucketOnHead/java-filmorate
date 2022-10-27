@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.dao.film;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,7 +35,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film add(@NonNull Film film) {
+    public Film add(Film film) {
         log.debug("add({}).", film);
         jdbcTemplate.update(""
                         + "INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id) "
@@ -64,7 +63,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(@NonNull Film film) {
+    public Film update(Film film) {
         log.debug("update({}).", film);
         jdbcTemplate.update(""
                         + "UPDATE films "
