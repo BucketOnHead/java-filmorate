@@ -67,7 +67,7 @@ public class FilmDbStorage implements FilmStorage {
         log.debug("update({}).", film);
         jdbcTemplate.update(""
                         + "UPDATE films "
-                        + "SET name=?, description=?, release_date=?, duration_in_minutes=?, mpa_rating_id=?"
+                        + "SET name=?, description=?, release_date=?, duration_in_minutes=?, mpa_rating_id=? "
                         + "WHERE film_id=?",
                 film.getName(),
                 film.getDescription(),
