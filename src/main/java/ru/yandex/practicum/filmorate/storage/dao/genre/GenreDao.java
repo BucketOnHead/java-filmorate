@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface GenreDao {
     /**
-     * Меьтод возвращает жанр из хранилища
+     * Метод возвращает жанр из хранилища
      * по его идентификатору.
      *
      * @param genreID идентификатор жанра.
@@ -24,7 +24,7 @@ public interface GenreDao {
     Collection<Genre> getAll();
 
     /**
-     * Метод проверяет содержится ли в хранилище
+     * Метод проверяет содержаться ли в хранилище
      * указанный жанр.
      *
      * @param genreID идентификатор жанра.
