@@ -66,9 +66,10 @@ public class GenreDaoImpl implements GenreDao {
     public static class GenreMapper implements RowMapper<Genre> {
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Genre(
-                    rs.getInt("genre_id"),
-                    rs.getString("name"));
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("genre_id"));
+            genre.setName(rs.getString("name"));
+            return genre;
         }
     }
 }

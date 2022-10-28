@@ -51,10 +51,7 @@ public class UserDbService implements UserService {
 
     @Override
     public User update(User user) {
-        if (!userStorage.contains(user.getId())) {
-            log.warn("Не удалось обновить пользователя: {}.", format(USER_NOT_FOUND, user.getId()));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, user.getId()));
-        }
+        checkUserToUpdate(user);
         return userStorage.update(user);
     }
 
@@ -116,7 +113,7 @@ public class UserDbService implements UserService {
      * Метод проверяет корректность пользователя
      * для последующего добавления в хранилище.
      *
-     * @param user Объек пользователя.
+     * @param user Объект пользователя.
      * @throws UserAlreadyExistsException в случае, если пользователь
      *                                    уже присутствует в хранилище.
      * @throws IllegalArgumentException   в случае, если пользователю
@@ -138,6 +135,21 @@ public class UserDbService implements UserService {
     }
 
     /**
+     * Метод проверяет корректность пользователя
+     * для последующего обновления в хранилище.
+     *
+     * @param user Объект пользователя.
+     * @throws UserNotFoundException в случае, если пользователь
+     *                               отсутствует в хранилище.
+     */
+    private void checkUserToUpdate(User user) {
+        if (!userStorage.contains(user.getId())) {
+            log.warn("Не удалось обновить пользователя: {}.", format(USER_NOT_FOUND, user.getId()));
+            throw new UserNotFoundException(format(USER_NOT_FOUND, user.getId()));
+        }
+    }
+
+    /**
      * Метод проверяет корректность дружбы, для
      * последующего добавления в хранилище.
      *
@@ -145,7 +157,7 @@ public class UserDbService implements UserService {
      *                 которому был отправлен запрос
      *                 на дружбу.
      * @param friendID идентификатор пользователя,
-     *                 который отправаил запрос на
+     *                 который отправил запрос на
      *                 дружбу.
      * @throws UserNotFoundException            в случае, если пользователь
      *                                          отсутствует в хранилище.
@@ -185,7 +197,7 @@ public class UserDbService implements UserService {
      *                 которому был отправлен запрос
      *                 на дружбу.
      * @param friendID идентификатор пользователя,
-     *                 который отправаил запрос на
+     *                 который отправил запрос на
      *                 дружбу.
      * @throws UserNotFoundException       в случае, если пользователь
      *                                     отсутствует в хранилище.
@@ -221,7 +233,7 @@ public class UserDbService implements UserService {
      * получения общих друзей.
      *
      * @param userID      идентификатор пользователя.
-     * @param otherUserID идентификатор дркугого
+     * @param otherUserID идентификатор другого
      *                    пользователя.
      * @throws UserNotFoundException в случае, если пользователь
      *                               отсутствует в хранилище.
