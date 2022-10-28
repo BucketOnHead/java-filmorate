@@ -88,7 +88,7 @@ public class UserDbService implements UserService {
             log.warn("Не удалось вернуть друзей: {}.", format(USER_NOT_FOUND, userID));
             throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
         }
-        List<User> friends = friendshipDao.getFromUserID(userID).stream()
+        List<User> friends = friendshipDao.getFromUserIDs(userID).stream()
                 .mapToLong(Long::valueOf)
                 .mapToObj(userStorage::get)
                 .collect(Collectors.toList());
@@ -100,8 +100,8 @@ public class UserDbService implements UserService {
     public Collection<User> getCommonFriends(long userID, long otherUserID) {
         checkCommonFriendToGet(userID, otherUserID);
         List<User> commonFriends = CollectionUtils.intersection(
-                        friendshipDao.getFromUserID(userID),
-                        friendshipDao.getFromUserID(otherUserID)).stream()
+                        friendshipDao.getFromUserIDs(userID),
+                        friendshipDao.getFromUserIDs(otherUserID)).stream()
                 .mapToLong(Long::valueOf)
                 .mapToObj(userStorage::get)
                 .collect(Collectors.toList());

@@ -61,7 +61,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     }
 
     @Override
-    public Collection<Long> getFromUserID(long toUserId) {
+    public Collection<Long> getFromUserIDs(long toUserId) {
         log.debug("getFriendships({}).", toUserId);
         List<Long> friendships = jdbcTemplate.query(format(""
                         + "SELECT from_user_id, to_user_id, IsMutual "

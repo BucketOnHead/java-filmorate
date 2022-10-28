@@ -37,10 +37,10 @@ public interface FriendshipDao {
      * @return Коллекция идентификатор пользователей,
      * отправивших запрос на дружбу.
      */
-    Collection<Long> getFromUserID(long toUserId);
+    Collection<Long> getFromUserIDs(long toUserId);
 
     /**
-     * Метод проверяет содержится ли в хранилище
+     * Метод проверяет содержаться ли в хранилище
      * запрос на дружбу (от пользователя фильму).
      *
      * @param fromUserID идентификатор пользователя,
