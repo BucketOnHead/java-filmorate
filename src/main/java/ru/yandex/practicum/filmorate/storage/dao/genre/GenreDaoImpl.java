@@ -46,7 +46,7 @@ public class GenreDaoImpl implements GenreDao {
                 + "SELECT genre_id, name "
                 + "FROM genres "
                 + "ORDER BY genre_id", new GenreMapper());
-        log.trace("Возвращенны все жанры: {}.", result);
+        log.trace("Возвращены все жанры: {}.", result);
         return result;
     }
 

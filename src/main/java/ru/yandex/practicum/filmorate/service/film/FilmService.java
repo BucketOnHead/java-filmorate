@@ -11,7 +11,7 @@ public interface FilmService extends Service<Film> {
      * фильмов по популярности, основываясь на
      * количестве лайков у каждого фильма.
      *
-     * @param count размер коллекцции.
+     * @param count размер коллекции.
      * @return коллекция популярных фильмов.
      */
     Collection<Film> getPopularFilms(int count);

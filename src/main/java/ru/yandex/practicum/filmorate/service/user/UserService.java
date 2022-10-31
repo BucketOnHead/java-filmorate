@@ -44,7 +44,7 @@ public interface UserService extends Service<User> {
      * @param otherUserID идентификатор другого пользователя.
      * @return коллекция общих друзей между пользователями.
      * @exception UserLogicException в случае, если
-     * пользователь запрашивает общих друзей иежду собой.
+     * пользователь запрашивает общих друзей между собой.
      */
     Collection<User> getCommonFriends(long userID, long otherUserID);
 }

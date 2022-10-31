@@ -70,7 +70,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
                 .stream()
                 .map(Friendship::getFromUserId)
                 .collect(Collectors.toList());
-        log.trace("Возврашены запросы на дружбу с пользователем ID_{}: {}.",
+        log.trace("Возвращены запросы на дружбу с пользователем ID_{}: {}.",
                 toUserId, friendships);
         return friendships;
     }
@@ -91,7 +91,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     }
 
     /**
-     * Метод возвращает связь между пользоватедями
+     * Метод возвращает связь между пользователями
      *
      * @param fromUserID идентификатор пользователя,
      *                   отправившего запрос на дружбу.

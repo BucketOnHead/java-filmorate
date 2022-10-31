@@ -49,7 +49,7 @@ public interface FriendshipDao {
      *                 которому был отправлен запрос
      *                 на дружбу.
      * @return Логическое значение, true - если
-     * запрос на дружюу содержится
+     * запрос на дружбу содержится
      * в хранилище, и false - если нет.
      */
     boolean contains(long fromUserID, long toUserID);

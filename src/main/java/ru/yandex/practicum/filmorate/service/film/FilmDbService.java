@@ -13,10 +13,10 @@ import ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundExceptio
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
 import java.util.Collection;
@@ -146,7 +146,7 @@ public class FilmDbService implements FilmService {
     }
 
     /**
-     * Метод проверяет корреткность фильма,
+     * Метод проверяет корректность фильма,
      * для последующего добавления в хранилище.
      *
      * @param film объект фильма.
@@ -185,7 +185,7 @@ public class FilmDbService implements FilmService {
     }
 
     /**
-     * Метод проверяет корреткность фильма,
+     * Метод проверяет корректность фильма,
      * для последующего обновления в хранилище.
      *
      * @param film объект фильма.
@@ -216,7 +216,7 @@ public class FilmDbService implements FilmService {
     }
 
     /**
-     * Метод проверяет корреткность лайка
+     * Метод проверяет корректность лайка
      * пользователя, для последующего добавления
      * в хранилище.
      *
@@ -249,7 +249,7 @@ public class FilmDbService implements FilmService {
     }
 
     /**
-     * Метод проверяет корреткность лайка
+     * Метод проверяет корректность лайка
      * пользователя, для последующего добавления
      * в хранилище.
      *
