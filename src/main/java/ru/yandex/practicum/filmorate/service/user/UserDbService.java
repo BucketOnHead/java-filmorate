@@ -72,7 +72,7 @@ public class UserDbService implements UserService {
     @Override
     public void addFriend(long userID, long friendID) {
         checkFriendToAdd(userID, friendID);
-        boolean isMutual = userStorage.get(friendID).getFriends().contains(userID);
+        boolean isMutual = friendshipDao.contains(friendID, userID);
         friendshipDao.add(friendID, userID, isMutual);
     }
 
