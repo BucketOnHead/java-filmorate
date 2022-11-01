@@ -3,10 +3,9 @@ package ru.yandex.practicum.filmorate.storage.dao.like;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Like;
+import ru.yandex.practicum.filmorate.storage.mapper.LikeMapper;
 
 import java.util.Objects;
 
@@ -64,7 +63,7 @@ public class LikeDaoImpl implements LikeDao {
                     + "SELECT film_id, user_id "
                     + "FROM film_likes "
                     + "WHERE film_id=%d "
-                    + "AND user_id=%d", filmID, userID), new BeanPropertyRowMapper<>(Like.class));
+                    + "AND user_id=%d", filmID, userID), new LikeMapper());
             log.trace("Найден лайк у фильма ID_{} от пользователя ID_{}.", filmID, userID);
             return true;
         } catch (EmptyResultDataAccessException ex) {

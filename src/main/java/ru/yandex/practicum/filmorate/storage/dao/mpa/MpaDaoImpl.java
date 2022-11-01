@@ -4,12 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
+import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,15 +58,6 @@ public class MpaDaoImpl implements MpaDao {
         } catch (EmptyResultDataAccessException ex) {
             log.trace("Рейтинг MPA ID_{} не найден.", mpaID);
             return false;
-        }
-    }
-
-    private static class MpaMapper implements RowMapper<Mpa> {
-        @Override
-        public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Mpa(
-                    rs.getInt("mpa_rating_id"),
-                    rs.getString("name"));
         }
     }
 }

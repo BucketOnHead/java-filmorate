@@ -4,16 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
-import ru.yandex.practicum.filmorate.model.film.Mpa;
-import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDaoImpl;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -139,7 +136,7 @@ public class FilmDbStorage implements FilmStorage {
                 + "FROM film_genres AS f "
                 + "LEFT OUTER JOIN genres AS g ON f.genre_id = g.genre_id "
                 + "WHERE f.film_id=%d "
-                + "ORDER BY g.genre_id", filmID), new GenreDaoImpl.GenreMapper()));
+                + "ORDER BY g.genre_id", filmID), new GenreMapper()));
         log.trace("Возвращены все жанры для фильма ID_{}: {}.", filmID, genres);
         return genres;
     }
@@ -157,23 +154,6 @@ public class FilmDbStorage implements FilmStorage {
                 + "FROM film_genres "
                 + "WHERE film_id=?", filmID);
         log.debug("Удалены все жанры у фильма {}.", filmID);
-    }
-
-    private static class FilmMapper implements RowMapper<Film> {
-        @Override
-        public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Mpa mpa = new Mpa();
-            mpa.setId(rs.getInt("mpa_rating_id"));
-
-            Film film = new Film();
-            film.setId(rs.getLong("film_id"));
-            film.setName(rs.getString("name"));
-            film.setDescription(rs.getString("description"));
-            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-            film.setDuration(rs.getInt("duration_in_minutes"));
-            film.setMpa(mpa);
-            return film;
-        }
     }
 }
 

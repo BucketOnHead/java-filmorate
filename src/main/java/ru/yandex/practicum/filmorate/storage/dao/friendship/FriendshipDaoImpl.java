@@ -3,11 +3,10 @@ package ru.yandex.practicum.filmorate.storage.dao.friendship;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.user.Friendship;
+import ru.yandex.practicum.filmorate.storage.mapper.FriendshipMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +19,6 @@ import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 @Slf4j
 @Component
 public class FriendshipDaoImpl implements FriendshipDao {
-    private static final RowMapper<Friendship> friendshipMapper = new BeanPropertyRowMapper<>(Friendship.class);
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -66,7 +64,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
         List<Long> friendships = jdbcTemplate.query(format(""
                         + "SELECT from_user_id, to_user_id, IsMutual "
                         + "FROM friendships "
-                        + "WHERE to_user_id=%d", toUserId), friendshipMapper)
+                        + "WHERE to_user_id=%d", toUserId), new FriendshipMapper())
                 .stream()
                 .map(Friendship::getFromUserId)
                 .collect(Collectors.toList());
@@ -105,6 +103,6 @@ public class FriendshipDaoImpl implements FriendshipDao {
                 + "SELECT from_user_id, to_user_id, isMutual "
                 + "FROM friendships "
                 + "WHERE from_user_id=%d "
-                + "AND to_user_id=%d", fromUserID, toUserID), friendshipMapper);
+                + "AND to_user_id=%d", fromUserID, toUserID), new FriendshipMapper());
     }
 }
