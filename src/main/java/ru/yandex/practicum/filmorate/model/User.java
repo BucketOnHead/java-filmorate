@@ -1,12 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 public class User {
@@ -26,9 +23,6 @@ public class User {
     @NotNull(message = "У пользователя должна быть указанна дата рождения")
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
-
-    @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
 
     public String getName() {
         if (name == null || name.isBlank()) {
