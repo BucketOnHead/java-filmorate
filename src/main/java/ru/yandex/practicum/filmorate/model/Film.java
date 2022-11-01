@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.annotation.AfterCinemaBirthday;
 
@@ -36,11 +35,4 @@ public class Film {
     private Mpa mpa;
 
     private Set<Genre> genres = new HashSet<>();
-
-    @JsonIgnore
-    private Set<Long> likes = new HashSet<>();
-
-    public Set<Genre> getGenres() {
-        return genres != null ? genres : new HashSet<>();
-    }
 }
