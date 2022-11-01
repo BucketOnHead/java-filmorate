@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.mpa;
 
-import ru.yandex.practicum.filmorate.model.film.Mpa;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.Service;
 
 public interface MpaService extends Service<Mpa> {

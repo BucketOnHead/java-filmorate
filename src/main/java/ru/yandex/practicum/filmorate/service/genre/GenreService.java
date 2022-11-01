@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.genre;
 
-import ru.yandex.practicum.filmorate.model.film.Genre;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.Service;
 
 public interface GenreService extends Service<Genre> {

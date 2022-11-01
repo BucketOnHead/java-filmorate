@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.Friendship
 import ru.yandex.practicum.filmorate.exception.storage.dao.friendship.FriendshipNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.user.User;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.friendship.FriendshipDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 

@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
-import ru.yandex.practicum.filmorate.model.user.Friendship;
+import ru.yandex.practicum.filmorate.model.Friendship;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

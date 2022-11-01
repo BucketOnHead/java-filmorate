@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.exception.storage.film.FilmNotFoundExceptio
 import ru.yandex.practicum.filmorate.exception.storage.film.LikeAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.film.Genre;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
