@@ -8,8 +8,10 @@ import lombok.*;
 public class Friendship {
     @NonNull
     private Long fromUserId;
+
     @NonNull
     private Long toUserId;
+
     @NonNull
     private Boolean isMutual;
 }
