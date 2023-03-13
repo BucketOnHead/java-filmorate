@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,25 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 
-import java.util.Collection;
-
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
-
 @Slf4j
 @RestController
 @RequestMapping("/mpa")
+@RequiredArgsConstructor
 public class MpaController {
     private final MpaService mpaService;
 
-    @Autowired
-    public MpaController(MpaService mpaService) {
-        log.debug("MpaController({}).", mpaService.getClass().getSimpleName());
-        this.mpaService = mpaService;
-        log.info(DEPENDENCY_MESSAGE, mpaService.getClass().getName());
-    }
-
     @GetMapping
-    public Collection<Mpa> getMpaRatings() {
+    public Iterable<Mpa> getMpaRatings() {
         return mpaService.getAll();
     }
 
