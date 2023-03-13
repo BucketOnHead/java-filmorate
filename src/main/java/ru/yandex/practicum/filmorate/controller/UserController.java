@@ -1,29 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
-import java.util.Collection;
-
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(@Qualifier("UserDbService") UserService userService) {
-        log.debug("UserController({}).", userService.getClass().getSimpleName());
-        this.userService = userService;
-        log.info(DEPENDENCY_MESSAGE, userService.getClass().getName());
-    }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
@@ -36,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> getUsers() {
+    public Iterable<User> getUsers() {
         return userService.getAll();
     }
 
@@ -46,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getFriends(@PathVariable long id) {
+    public Iterable<User> getFriends(@PathVariable long id) {
         return userService.getFriends(id);
     }
 
@@ -61,7 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
+    public Iterable<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 }

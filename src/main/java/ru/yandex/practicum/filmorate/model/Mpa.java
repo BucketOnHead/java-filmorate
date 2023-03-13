@@ -11,6 +11,7 @@ import lombok.NonNull;
 public class Mpa {
     @NonNull
     private Integer id;
+
     @NonNull
     private String name;
 }

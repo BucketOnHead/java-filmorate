@@ -1,29 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import javax.validation.Valid;
-import java.util.Collection;
-
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
-
-    @Autowired
-    public FilmController(@Qualifier("FilmDbService") FilmService filmService) {
-        log.debug("FilmController({}).", filmService.getClass().getSimpleName());
-        this.filmService = filmService;
-        log.info(DEPENDENCY_MESSAGE, filmService.getClass().getName());
-    }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
@@ -36,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping
-    public Collection<Film> getFilms() {
+    public Iterable<Film> getFilms() {
         return filmService.getAll();
     }
 
@@ -46,7 +36,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Iterable<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
     }
 

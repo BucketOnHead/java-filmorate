@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.service.Service;
 import java.util.Collection;
 
 public interface FilmService extends Service<Film> {
+
     /**
      * Метод возвращает коллекцию состоящую из N
      * фильмов по популярности, основываясь на

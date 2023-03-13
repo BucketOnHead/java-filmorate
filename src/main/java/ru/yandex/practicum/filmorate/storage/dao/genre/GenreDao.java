@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.util.Collection;
 
 public interface GenreDao {
+
     /**
      * Метод возвращает жанр из хранилища
      * по его идентификатору.

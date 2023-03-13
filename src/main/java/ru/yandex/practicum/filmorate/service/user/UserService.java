@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.service.Service;
 import java.util.Collection;
 
 public interface UserService extends Service<User> {
+
     /**
      * Метод добавляет пользователю в друзей
      * друга.
