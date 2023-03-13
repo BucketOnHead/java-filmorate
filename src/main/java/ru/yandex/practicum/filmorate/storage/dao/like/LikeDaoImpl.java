@@ -1,28 +1,21 @@
 package ru.yandex.practicum.filmorate.storage.dao.like;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.storage.mapper.LikeMapper;
 
 import java.util.Objects;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
-@Component
+@Repository
+@RequiredArgsConstructor
 public class LikeDaoImpl implements LikeDao {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public LikeDaoImpl(JdbcTemplate jdbcTemplate) {
-        log.debug("LikeDaoImpl({}).", jdbcTemplate.getClass().getSimpleName());
-        this.jdbcTemplate = jdbcTemplate;
-        log.info(DEPENDENCY_MESSAGE, jdbcTemplate.getClass().getName());
-    }
 
     @Override
     public void add(long filmID, long userID) {
