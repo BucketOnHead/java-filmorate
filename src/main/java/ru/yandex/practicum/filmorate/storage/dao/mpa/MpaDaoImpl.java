@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.dao.mpa;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
 
@@ -12,19 +12,12 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
-@Component
+@Repository
+@RequiredArgsConstructor
 public class MpaDaoImpl implements MpaDao {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public MpaDaoImpl(JdbcTemplate jdbcTemplate) {
-        log.debug("MpaDaoImpl({}).", jdbcTemplate.getClass().getSimpleName());
-        this.jdbcTemplate = jdbcTemplate;
-        log.info(DEPENDENCY_MESSAGE, jdbcTemplate.getClass().getName());
-    }
 
     @Override
     public Mpa get(int mpaID) {
@@ -41,9 +34,9 @@ public class MpaDaoImpl implements MpaDao {
     public Collection<Mpa> getAll() {
         log.debug("getAll().");
         List<Mpa> result = jdbcTemplate.query(""
-                        + "SELECT mpa_rating_id, name "
-                        + "FROM mpa_ratings "
-                        + "ORDER BY mpa_rating_id", new MpaMapper());
+                + "SELECT mpa_rating_id, name "
+                + "FROM mpa_ratings "
+                + "ORDER BY mpa_rating_id", new MpaMapper());
         log.trace("Возвращены все рейтинги MPA: {}.", result);
         return result;
     }
