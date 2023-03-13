@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.dao.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.mapper.UserMapper;
 
@@ -13,19 +13,12 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
-@Component("UserDbStorage")
+@Repository
+@RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        log.debug("UserDbStorage({}).", jdbcTemplate.getClass().getSimpleName());
-        this.jdbcTemplate = jdbcTemplate;
-        log.info(DEPENDENCY_MESSAGE, jdbcTemplate.getClass().getName());
-    }
 
     @Override
     public User add(User user) {

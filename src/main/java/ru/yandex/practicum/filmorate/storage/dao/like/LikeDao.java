@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao.like;
 
 public interface LikeDao {
+
     /**
      * Метод добавляет в хранилище лайк (от
      * пользователя фильму).

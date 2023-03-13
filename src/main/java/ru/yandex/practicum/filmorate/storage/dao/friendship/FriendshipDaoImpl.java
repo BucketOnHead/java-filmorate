@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.dao.friendship;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.storage.mapper.FriendshipMapper;
 
@@ -14,19 +14,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
-@Component
+@Repository
+@RequiredArgsConstructor
 public class FriendshipDaoImpl implements FriendshipDao {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public FriendshipDaoImpl(JdbcTemplate jdbcTemplate) {
-        log.debug("FriendshipDaoImpl({}).", jdbcTemplate.getClass().getSimpleName());
-        this.jdbcTemplate = jdbcTemplate;
-        log.info(DEPENDENCY_MESSAGE, jdbcTemplate.getClass().getName());
-    }
 
     @Override
     public void add(long fromUserID, long toUserID, boolean isMutual) {

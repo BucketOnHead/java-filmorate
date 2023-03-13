@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.dao.genre;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
@@ -12,19 +12,12 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
-import static ru.yandex.practicum.filmorate.service.Service.DEPENDENCY_MESSAGE;
 
 @Slf4j
-@Component
+@Repository
+@RequiredArgsConstructor
 public class GenreDaoImpl implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public GenreDaoImpl(JdbcTemplate jdbcTemplate) {
-        log.debug("GenreDaoImpl({}).", jdbcTemplate.getClass().getSimpleName());
-        this.jdbcTemplate = jdbcTemplate;
-        log.info(DEPENDENCY_MESSAGE, jdbcTemplate.getClass().getName());
-    }
 
     @Override
     public Genre get(int genreID) {

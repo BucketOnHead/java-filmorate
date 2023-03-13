@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.util.Collection;
 
 public interface MpaDao {
+
     /**
      * Метод возвращает рейтинг MPA по его идентификатору.
      *

@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 import java.util.Set;
 
 public interface FilmStorage extends Storage<Film> {
+
     /**
      * Метод добавляет в хранилище связь между
      * фильмом и жанром.
