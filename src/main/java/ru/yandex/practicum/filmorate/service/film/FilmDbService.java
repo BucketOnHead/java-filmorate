@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException;
@@ -23,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static ru.yandex.practicum.filmorate.exception.storage.dao.genre.GenreNotFoundException.GENRE_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.dao.mpa.MpaNotFoundException.MPA_NOT_FOUND;
 import static ru.yandex.practicum.filmorate.exception.storage.film.FilmAlreadyExistsException.FILM_ALREADY_EXISTS;
@@ -33,37 +31,14 @@ import static ru.yandex.practicum.filmorate.exception.storage.film.LikeNotFoundE
 import static ru.yandex.practicum.filmorate.exception.storage.user.UserNotFoundException.USER_NOT_FOUND;
 
 @Slf4j
-@Service("FilmDbService")
+@Service
+@RequiredArgsConstructor
 public class FilmDbService implements FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final GenreDao genreDao;
     private final LikeDao likeDao;
     private final MpaDao mpaDao;
-
-    @Autowired
-    public FilmDbService(@Qualifier("FilmDbStorage") FilmStorage filmStorage,
-                         @Qualifier("UserDbStorage") UserStorage userStorage,
-                         GenreDao genreDao,
-                         LikeDao likeDao,
-                         MpaDao mpaDao) {
-        log.debug("FilmDbService({}, {}, {}, {}, {}).",
-                filmStorage.getClass().getSimpleName(),
-                userStorage.getClass().getSimpleName(),
-                genreDao.getClass().getSimpleName(),
-                likeDao.getClass().getSimpleName(),
-                mpaDao.getClass().getSimpleName());
-        this.filmStorage = filmStorage;
-        log.info(DEPENDENCY_MESSAGE, filmStorage.getClass().getName());
-        this.userStorage = userStorage;
-        log.info(DEPENDENCY_MESSAGE, userStorage.getClass().getName());
-        this.genreDao = genreDao;
-        log.info(DEPENDENCY_MESSAGE, genreDao.getClass().getName());
-        this.likeDao = likeDao;
-        log.info(DEPENDENCY_MESSAGE, likeDao.getClass().getName());
-        this.mpaDao = mpaDao;
-        log.info(DEPENDENCY_MESSAGE, mpaDao.getClass().getName());
-    }
 
     @Override
     public Film add(Film film) {
@@ -87,8 +62,8 @@ public class FilmDbService implements FilmService {
     @Override
     public Film get(long filmID) {
         if (!filmStorage.contains(filmID)) {
-            log.warn("Не удалось вернуть фильм: {}.", format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+            log.warn("Не удалось вернуть фильм: {}.", String.format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(String.format(FILM_NOT_FOUND, filmID));
         }
         Film film = filmStorage.get(filmID);
         film.setGenres(filmStorage.getGenres(filmID));
@@ -165,21 +140,21 @@ public class FilmDbService implements FilmService {
         String msg = "Не удалось добавить фильм: {}.";
         if (film.getId() != 0) {
             if (filmStorage.contains(film.getId())) {
-                log.warn(msg, format(FILM_ALREADY_EXISTS, film.getId()));
-                throw new FilmAlreadyExistsException(format(FILM_ALREADY_EXISTS, film.getId()));
+                log.warn(msg, String.format(FILM_ALREADY_EXISTS, film.getId()));
+                throw new FilmAlreadyExistsException(String.format(FILM_ALREADY_EXISTS, film.getId()));
             } else {
                 log.warn(msg, "Запрещено устанавливать ID вручную");
                 throw new IllegalArgumentException("Запрещено устанавливать ID вручную");
             }
         }
         if (!mpaDao.contains(film.getMpa().getId())) {
-            log.warn(msg, format(MPA_NOT_FOUND, film.getMpa().getId()));
-            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+            log.warn(msg, String.format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(String.format(MPA_NOT_FOUND, film.getMpa().getId()));
         }
         for (Genre genre : film.getGenres()) {
             if (!genreDao.contains(genre.getId())) {
-                log.warn(msg, format(GENRE_NOT_FOUND, genre.getId()));
-                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
+                log.warn(msg, String.format(GENRE_NOT_FOUND, genre.getId()));
+                throw new GenreNotFoundException(String.format(GENRE_NOT_FOUND, genre.getId()));
             }
         }
     }
@@ -200,17 +175,17 @@ public class FilmDbService implements FilmService {
         log.debug("checkFilmToUpdate({}).", film);
         String msg = "Не удалось обновить фильм: {}.";
         if (!filmStorage.contains(film.getId())) {
-            log.warn(msg, format(FILM_NOT_FOUND, film.getId()));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, film.getId()));
+            log.warn(msg, String.format(FILM_NOT_FOUND, film.getId()));
+            throw new FilmNotFoundException(String.format(FILM_NOT_FOUND, film.getId()));
         }
         if (!mpaDao.contains(film.getMpa().getId())) {
-            log.warn(msg, format(MPA_NOT_FOUND, film.getMpa().getId()));
-            throw new MpaNotFoundException(format(MPA_NOT_FOUND, film.getMpa().getId()));
+            log.warn(msg, String.format(MPA_NOT_FOUND, film.getMpa().getId()));
+            throw new MpaNotFoundException(String.format(MPA_NOT_FOUND, film.getMpa().getId()));
         }
         for (Genre genre : film.getGenres()) {
             if (!genreDao.contains(genre.getId())) {
-                log.warn(msg, format(GENRE_NOT_FOUND, genre.getId()));
-                throw new GenreNotFoundException(format(GENRE_NOT_FOUND, genre.getId()));
+                log.warn(msg, String.format(GENRE_NOT_FOUND, genre.getId()));
+                throw new GenreNotFoundException(String.format(GENRE_NOT_FOUND, genre.getId()));
             }
         }
     }
@@ -235,16 +210,16 @@ public class FilmDbService implements FilmService {
         log.debug("checkLikeToAdd({}, {}).", filmID, userID);
         String msg = "Не удалось добавить лайк: {}.";
         if (!filmStorage.contains(filmID)) {
-            log.warn(msg, format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+            log.warn(msg, String.format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(String.format(FILM_NOT_FOUND, filmID));
         }
         if (!userStorage.contains(userID)) {
-            log.warn(msg, format(USER_NOT_FOUND, userID));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+            log.warn(msg, String.format(USER_NOT_FOUND, userID));
+            throw new UserNotFoundException(String.format(USER_NOT_FOUND, userID));
         }
         if (likeDao.contains(filmID, userID)) {
-            log.warn(msg, format(LIKE_ALREADY_EXISTS, filmID, userID));
-            throw new LikeAlreadyExistsException(format(LIKE_ALREADY_EXISTS, filmID, userID));
+            log.warn(msg, String.format(LIKE_ALREADY_EXISTS, filmID, userID));
+            throw new LikeAlreadyExistsException(String.format(LIKE_ALREADY_EXISTS, filmID, userID));
         }
     }
 
@@ -268,16 +243,16 @@ public class FilmDbService implements FilmService {
         log.debug("checkLikeToDelete({}, {}).", filmID, userID);
         String msg = "Не удалось удалить лайк: {}.";
         if (!filmStorage.contains(filmID)) {
-            log.warn(msg, format(FILM_NOT_FOUND, filmID));
-            throw new FilmNotFoundException(format(FILM_NOT_FOUND, filmID));
+            log.warn(msg, String.format(FILM_NOT_FOUND, filmID));
+            throw new FilmNotFoundException(String.format(FILM_NOT_FOUND, filmID));
         }
         if (!userStorage.contains(userID)) {
-            log.warn(msg, format(USER_NOT_FOUND, userID));
-            throw new UserNotFoundException(format(USER_NOT_FOUND, userID));
+            log.warn(msg, String.format(USER_NOT_FOUND, userID));
+            throw new UserNotFoundException(String.format(USER_NOT_FOUND, userID));
         }
         if (!likeDao.contains(filmID, userID)) {
-            log.warn(msg, format(LIKE_NOT_FOUND, filmID, userID));
-            throw new LikeNotFoundException(format(LIKE_NOT_FOUND, filmID, userID));
+            log.warn(msg, String.format(LIKE_NOT_FOUND, filmID, userID));
+            throw new LikeNotFoundException(String.format(LIKE_NOT_FOUND, filmID, userID));
         }
     }
 }

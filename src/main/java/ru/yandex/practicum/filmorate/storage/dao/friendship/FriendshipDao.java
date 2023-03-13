@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao.friendship;
 import java.util.Collection;
 
 public interface FriendshipDao {
+
     /**
      * Метод добавляет связь между пользователями
      * в хранилище.

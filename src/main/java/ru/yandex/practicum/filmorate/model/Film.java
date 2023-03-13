@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Data
 public class Film {
-    private long id;
+    private Long id;
 
     @NotNull(message = "У фильма должно быть имя")
     @NotBlank(message = "Имя не может быть пустым")
@@ -29,7 +29,7 @@ public class Film {
 
     @NotNull(message = "У фильма должна быть указана продолжительность")
     @Positive(message = "Продолжительность фильма не может быть отрицательной")
-    private int duration;
+    private Integer duration;
 
     @NotNull(message = "У фильма должен быть указан рейтинг MPA")
     private Mpa mpa;
