@@ -1,40 +1,46 @@
-# java-filmorate
+# Filmorate
 
-> Фильмов много — и с каждым годом становится всё больше.
-> Чем их больше, тем больше разных оценок.
-> Чем больше оценок, тем сложнее сделать выбор.
-> Однако не время сдаваться!
-> Перед вами бэкенд для сервиса, который будет
-> работать с фильмами и оценками пользователей, а также
-> возвращать топ фильмов, рекомендованных к просмотру.
-> Теперь ни вам, ни вашим друзьям не придётся долго размышлять,
-> что же посмотреть вечером.
+> Данный проект - это сервис для кинотеки,
+> который дает возможность пользователям выбирать, 
+> комментировать и оценивать любимые фильмы, 
+> а также искать наиболее популярные среди них. 
+> Кроме того, на сервисе можно добавлять друзей 
+> и получать рекомендации на основе их лайков.
+
+## Оглавление
+
+- [Валидация](#валидация)
+- [База данных](#база-данных)
 
 ## Валидация
 
-Входные данные, которые приходят в запросе на добавление нового фильма 
-или пользователя, должны соответствовать определённым критериям:
+Входные данные, поступающие в запросе, 
+должны соответствовать определенным критериям:
 
 <details>
     <summary><h3>Для фильмов:</h3></summary>
-    
-* Название не может быть пустым
-* Максимальная длина описания — 200 символов
-* Дата релиза — не раньше 28 декабря 1895 года[^1]
+
+* Название фильма должно быть указано и не может быть пустым
+* Максимальная длина описания фильма не должна превышать 200 символов
+* Дата релиза фильма должна быть не раньше 28 декабря 1895 года[^1]
 * Продолжительность фильма должна быть положительной
- 
-[^1]: 28 декабря 1895 года считается днём рождения кино.
+* Рейтинг фильма должен быть указан
+
 </details>
 
 <details>
     <summary><h3>Для пользователей:</h3></summary>
     
-* Электронная почта не может быть пустой и должна содержать символ '@'
-* Логин не может быть пустым и содержать пробелы
-* Имя для отображения может быть пустым — в таком случае будет использован логин
-* Дата рождения не может быть в будущем
+* Электронная почта пользователя должна быть указана и соответствовать формату email
+* Логин пользователя должен быть указан и не содержать пробелов
+* Дата рождения пользователя должна быть указана и не может быть в будущем
         
 </details>
+
+## База данных
+
+- [Схема БД](#схема-бд)
+- [Примеры запросов](#примеры-запросов)
 
 ## Схема БД
 
@@ -42,84 +48,88 @@
 
 ## Примеры запросов
 
-<!-- Начало блока с примерами запросов для фильмов  -->
 <details>
     <summary><h3>Для фильмов:</h3></summary>
     
 * `Создание` фильма:
     
 ```SQL
-INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id)
-VALUES(?, ?, ?, ?, ?)
+INSERT INTO films (name,
+                   description,
+                   release_date,
+                   duration_in_minutes,
+                   mpa_rating_id)
+VALUES (?, ?, ?, ?, ?);
 ```
 
 * `Обновление` фильма:
     
 ```SQL
-UPDATE films
-SET name=?,
-    description=?,
-    release_date=?,
-    duration_in_minutes=?,
-    mpa_rating_id=?
-WHERE film_id=?
+UPDATE
+    films
+SET name                = ?,
+    description         = ?,
+    release_date        = ?,
+    duration_in_minutes = ?,
+    mpa_rating_id       = ?
+WHERE film_id = ?;
 ```
     
 * `Получение` фильма `по идентификатору`:
 
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
-WHERE films.film_id=?
-GROUP BY films.film_id
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name AS mpa_rating,
+       g.name  AS genre
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+WHERE f.film_id = ?;
 ```   
     
 * `Получение всех` фильмов:
 
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
-GROUP BY films.film_id
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name              AS mpa_rating,
+       GROUP_CONCAT(g.name) AS genres
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+GROUP BY f.film_id;
 ```
     
-* `Получение популярных (по количеству лайков)` фильмов:
+* `Получение топ-N (по количеству лайков)` фильмов:
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id=film_likes.film_id
-GROUP BY films.film_id
-ORDER BY rate DESC
-LIMIT ?
-```
-    
-* `Добавление лайка`:
-```SQL
-INSERT INTO film_likes (film_id, user_id)
-VALUES (?, ?)
-``` 
-    
-* `Удаление лайка`:
-```SQL
-DELETE
-FROM film_likes
-WHERE film_id=?
-  AND user_id=?
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name           AS mpa_rating,
+       g.name            AS genre,
+       COUNT(fl.user_id) AS like_count
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+         LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+GROUP BY f.film_id,
+         mp.name,
+         g.name
+ORDER BY like_count DESC LIMIT ?;
 ```
 </details>
-
-<!-- Конец блока с примерами запросов для фильмов  -->
-<!-- Начало Блока с примерами запросов для пользователей  -->
 
 <details>
     <summary><h3>Для пользователей:</h3></summary>
@@ -127,19 +137,23 @@ WHERE film_id=?
 * `Создание` пользователя:
    
 ```SQL
-INSERT INTO users (email, login, name, birthday)
+INSERT INTO users (email,
+                   login,
+                   name,
+                   birthday)
 VALUES (?, ?, ?, ?)
 ```
     
 * `Обновление` пользователя:
    
 ```SQL
-UPDATE users
-SET email=?,
-    login=?,
-    name=?,
-    birthday=?
-WHERE user_id=?
+UPDATE
+    users
+SET email    = ?,
+    login    = ?,
+    name     = ?,
+    birthday = ?
+WHERE user_id = ?
 ```
     
 * `Получение` пользователя `по идентификатору`:
@@ -147,7 +161,7 @@ WHERE user_id=?
 ```SQL
 SELECT *
 FROM users
-WHERE user_id=?
+WHERE user_id = ?
 ```   
     
 * `Получение всех` пользователей:
@@ -156,50 +170,8 @@ WHERE user_id=?
 SELECT *
 FROM users
 ``` 
-    
-* `Получение друзей` пользователя `по идентификатору`:
-    
-```SQL
-SELECT users.*
-FROM users
-INNER JOIN friendships ON users.user_id=friendships.to_user_id
-WHERE users.user_id=?
-``` 
-    
-* `Добавление друга`
-    
-```SQL
-INSERT INTO friendships (from_user_id, to_user_id, isMutual)
-VALUES(?, ?, ?)
-``` 
-   
-* `Удаление друга`
-    
-```SQL
-DELETE
-FROM friendships
-WHERE from_user_id=?
-  AND to_user_id=?
-``` 
-    
-* `Получение общих друзей`
-```SQL
-SELECT users.*
-FROM users
-INNER JOIN user_friends ON users.user_id=friendships.from_user_id
-WHERE friendships.from_user_id=?
 
-INTERSECT
-
-SELECT users.*
-FROM users
-INNER JOIN user_friends ON users.user_id = friendships.from_user_id
-WHERE friendships.from_user_id=?
-``` 
 </details>
-
-<!-- Конец блока с примерами запросов для пользователей  -->
-<!-- Начало Блока с примерами запросов для жанров  -->
 
 <details>
     <summary><h3>Для жанров:</h3></summary>
@@ -209,7 +181,7 @@ WHERE friendships.from_user_id=?
 ```SQL
 SELECT *
 FROM genres
-WHERE genre_id=?
+WHERE genre_id = ?
 ``` 
     
 * `Получение всех` жанров:
@@ -220,9 +192,6 @@ FROM genres
 ```   
 </details>
 
-<!-- Конец блока с примерами запросов для жанров  -->
-<!-- Начало Блока с примерами запросов для рейтингов MPA  -->
-
 <details>
     <summary><h3>Для рейтингов MPA:</h3></summary>
     
@@ -231,7 +200,7 @@ FROM genres
 ```SQL
 SELECT *
 FROM mpa_ratings
-WHERE mpa_rating_id=?
+WHERE mpa_rating_id = ?
 ``` 
     
 * `Получение всех` рейтингов MPA:
@@ -242,4 +211,4 @@ FROM mpa_ratings
 ```   
 </details>
 
-<!-- Конец блока с примерами запросов для рейтингов MPA  -->
+[^1]: 28 декабря 1895 года считается днём рождения кино.
