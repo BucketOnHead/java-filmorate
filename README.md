@@ -10,6 +10,7 @@
 ## Оглавление
 
 - [Валидация](#валидация)
+- [База данных](#база-данных)
 
 ## Валидация
 
@@ -36,90 +37,99 @@
         
 </details>
 
+## База данных
+
+- [Схема БД](#схема-бд)
+- [Примеры запросов](#примеры-запросов)
+
 ## Схема БД
 
 ![](https://github.com/IvanMarakanov/java-filmorate/blob/main/src/main/resources/schema.png?raw=true)
 
 ## Примеры запросов
 
-<!-- Начало блока с примерами запросов для фильмов  -->
 <details>
     <summary><h3>Для фильмов:</h3></summary>
     
 * `Создание` фильма:
     
 ```SQL
-INSERT INTO films (name, description, release_date, duration_in_minutes, mpa_rating_id)
-VALUES(?, ?, ?, ?, ?)
+INSERT INTO films (name,
+                   description,
+                   release_date,
+                   duration_in_minutes,
+                   mpa_rating_id)
+VALUES (?, ?, ?, ?, ?);
 ```
 
 * `Обновление` фильма:
     
 ```SQL
-UPDATE films
-SET name=?,
-    description=?,
-    release_date=?,
-    duration_in_minutes=?,
-    mpa_rating_id=?
-WHERE film_id=?
+UPDATE
+    films
+SET name                = ?,
+    description         = ?,
+    release_date        = ?,
+    duration_in_minutes = ?,
+    mpa_rating_id       = ?
+WHERE film_id = ?;
 ```
     
 * `Получение` фильма `по идентификатору`:
 
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
-WHERE films.film_id=?
-GROUP BY films.film_id
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name AS mpa_rating,
+       g.name  AS genre
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+WHERE f.film_id = ?;
 ```   
     
 * `Получение всех` фильмов:
 
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id = film_likes.film_id
-GROUP BY films.film_id
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name              AS mpa_rating,
+       GROUP_CONCAT(g.name) AS genres
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+GROUP BY f.film_id;
 ```
     
-* `Получение популярных (по количеству лайков)` фильмов:
+* `Получение топ-N (по количеству лайков)` фильмов:
 ```SQL
-SELECT films.*,
-       mpa_ratings.name,
-       COUNT(film_likes.user_id) AS rate
-FROM films
-LEFT OUTER JOIN mpa_ratings ON films.mpa_rating_id=mpa_ratings.mpa_rating_id
-LEFT OUTER JOIN film_likes ON films.film_id=film_likes.film_id
-GROUP BY films.film_id
-ORDER BY rate DESC
-LIMIT ?
-```
-    
-* `Добавление лайка`:
-```SQL
-INSERT INTO film_likes (film_id, user_id)
-VALUES (?, ?)
-``` 
-    
-* `Удаление лайка`:
-```SQL
-DELETE
-FROM film_likes
-WHERE film_id=?
-  AND user_id=?
+SELECT f.film_id,
+       f.name,
+       f.description,
+       f.release_date,
+       f.duration_in_minutes,
+       mp.name           AS mpa_rating,
+       g.name            AS genre,
+       COUNT(fl.user_id) AS like_count
+FROM films f
+         JOIN mpa_ratings mp ON f.mpa_rating_id = mp.mpa_rating_id
+         JOIN film_genres fg ON f.film_id = fg.film_id
+         JOIN genres g ON fg.genre_id = g.genre_id
+         LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+GROUP BY f.film_id,
+         mp.name,
+         g.name
+ORDER BY like_count DESC LIMIT ?;
 ```
 </details>
-
-<!-- Конец блока с примерами запросов для фильмов  -->
-<!-- Начало Блока с примерами запросов для пользователей  -->
 
 <details>
     <summary><h3>Для пользователей:</h3></summary>
@@ -198,9 +208,6 @@ WHERE friendships.from_user_id=?
 ``` 
 </details>
 
-<!-- Конец блока с примерами запросов для пользователей  -->
-<!-- Начало Блока с примерами запросов для жанров  -->
-
 <details>
     <summary><h3>Для жанров:</h3></summary>
     
@@ -220,9 +227,6 @@ FROM genres
 ```   
 </details>
 
-<!-- Конец блока с примерами запросов для жанров  -->
-<!-- Начало Блока с примерами запросов для рейтингов MPA  -->
-
 <details>
     <summary><h3>Для рейтингов MPA:</h3></summary>
     
@@ -241,7 +245,5 @@ SELECT *
 FROM mpa_ratings
 ```   
 </details>
-
-<!-- Конец блока с примерами запросов для рейтингов MPA  -->
 
 [^1]: 28 декабря 1895 года считается днём рождения кино.
