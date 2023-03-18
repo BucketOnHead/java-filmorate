@@ -137,19 +137,23 @@ ORDER BY like_count DESC LIMIT ?;
 * `Создание` пользователя:
    
 ```SQL
-INSERT INTO users (email, login, name, birthday)
+INSERT INTO users (email,
+                   login,
+                   name,
+                   birthday)
 VALUES (?, ?, ?, ?)
 ```
     
 * `Обновление` пользователя:
    
 ```SQL
-UPDATE users
-SET email=?,
-    login=?,
-    name=?,
-    birthday=?
-WHERE user_id=?
+UPDATE
+    users
+SET email    = ?,
+    login    = ?,
+    name     = ?,
+    birthday = ?
+WHERE user_id = ?
 ```
     
 * `Получение` пользователя `по идентификатору`:
@@ -157,7 +161,7 @@ WHERE user_id=?
 ```SQL
 SELECT *
 FROM users
-WHERE user_id=?
+WHERE user_id = ?
 ```   
     
 * `Получение всех` пользователей:
@@ -166,46 +170,7 @@ WHERE user_id=?
 SELECT *
 FROM users
 ``` 
-    
-* `Получение друзей` пользователя `по идентификатору`:
-    
-```SQL
-SELECT users.*
-FROM users
-INNER JOIN friendships ON users.user_id=friendships.to_user_id
-WHERE users.user_id=?
-``` 
-    
-* `Добавление друга`
-    
-```SQL
-INSERT INTO friendships (from_user_id, to_user_id, isMutual)
-VALUES(?, ?, ?)
-``` 
-   
-* `Удаление друга`
-    
-```SQL
-DELETE
-FROM friendships
-WHERE from_user_id=?
-  AND to_user_id=?
-``` 
-    
-* `Получение общих друзей`
-```SQL
-SELECT users.*
-FROM users
-INNER JOIN user_friends ON users.user_id=friendships.from_user_id
-WHERE friendships.from_user_id=?
 
-INTERSECT
-
-SELECT users.*
-FROM users
-INNER JOIN user_friends ON users.user_id = friendships.from_user_id
-WHERE friendships.from_user_id=?
-``` 
 </details>
 
 <details>
@@ -216,7 +181,7 @@ WHERE friendships.from_user_id=?
 ```SQL
 SELECT *
 FROM genres
-WHERE genre_id=?
+WHERE genre_id = ?
 ``` 
     
 * `Получение всех` жанров:
@@ -235,7 +200,7 @@ FROM genres
 ```SQL
 SELECT *
 FROM mpa_ratings
-WHERE mpa_rating_id=?
+WHERE mpa_rating_id = ?
 ``` 
     
 * `Получение всех` рейтингов MPA:
